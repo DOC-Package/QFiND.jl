@@ -33,17 +33,17 @@ function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, N_ω::Int, M_sp
     ω = range(Ω_min, Ω_max, length=N_ω) |> collect
 
     # Compute the quantum noise spectral density
-    S = sbeta.(w)
+    S = sbeta.(ω)
     S = max.(S, 0.0)
 
     # Combine w and j into a 2D array
-    ωS = hcat(w, S)
+    ωS = hcat(ω, S)
 
     # Discretize
     freq, coef = orthpoly_discretization(ωS, M_sp)
 
     # Normalize zk
-    if Omega_min < 0
+    if Ω_min < 0
         norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0)
         norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max)
         norm = norm1 + norm2

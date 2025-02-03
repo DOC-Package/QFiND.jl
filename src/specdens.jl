@@ -1,5 +1,3 @@
-export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD
-export QuantumNoiseSpectralDensity, BosonicQNSD, FermionicQNSD_plus, FermionicQNSD_minus
 
 # Define Abstract Type for Spectral Density Models
 abstract type SpectralDensity <: Function end
@@ -111,11 +109,11 @@ end
 
 # Fermionic QNSD
 abstract type FermionicQNSD <: QuantumNoiseSpectralDensity end
-struct FermionicQNSD_plus <: FermionicQNSD 
+struct FermionicQNSD_Plus <: FermionicQNSD 
     sd :: SpectralDensity
     Temp :: Float64      
 end
-struct FermionicQNSD_minus <: FermionicQNSD
+struct FermionicQNSD_Minus <: FermionicQNSD
     sd :: SpectralDensity
     Temp :: Float64      
 end

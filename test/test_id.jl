@@ -1,3 +1,4 @@
+include("plot.jl")
 using Test
 using QFiND
 
@@ -19,8 +20,8 @@ using QFiND
 
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
+    bcf = BosonicBCF(sdens, Temp, Ω_c)
 
-    bcf = make_bcf(sdens, Temp, Ω_c)
     res = id_discr(sbeta, bcf, N_t, N_w, Tc, Omega_min, Omega_max, eps)
     @test !isnothing(res)
     freq = res.freq
@@ -32,5 +33,6 @@ using QFiND
     freq = res.freq
     coef = res.coef
     calc_error(freq, coef, bcf, Tc, N_t)
+    plot_bcf(freq, coef, bcf, Tc, N_t)
 
 end
