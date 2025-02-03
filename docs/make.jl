@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(QFiND, :DocTestSetup, :(using QFiND); recursive=true)
 
 makedocs(;
     modules=[QFiND],
-    authors="Hideaki Takahashi <hide.kyoto.1020@gmail.com> and contributors",
+    authors="Hideaki Takahashi <takahashi.hideaki.w33@kyoto-u.jp> and contributors",
     sitename="QFiND.jl",
     format=Documenter.HTML(;
         canonical="https://htkhsh.github.io/QFiND.jl",

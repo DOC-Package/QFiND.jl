@@ -3,7 +3,17 @@ uuid = "af16a7c1-792b-4481-9b88-c9c438329a9c"
 authors = ["Hideaki Takahashi <hide.kyoto.1020@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+LowRankApprox = "898213cb-b102-5a47-900c-97e73b919f73"
+NonNegLeastSquares = "b7351bd1-99d9-5c5d-8786-f205a815c4d7"
+QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+
 [compat]
+LinearAlgebra = "1.11.0"
+LowRankApprox = "0.5.5"
+NonNegLeastSquares = "0.4.1"
+QuadGK = "2.11.1"
 julia = "1.10"
 
 [extras]
