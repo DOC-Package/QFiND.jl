@@ -1,4 +1,21 @@
-export make_bcf
+abstract type BathCorrelationFunction <: Function end
+abstract type BosonicBathCorrelationFunction <: BathCorrelationFunction end
+struct BosonicBCF <: BosonicBathCorrelationFunction 
+    specdens::Function
+    Temp::Real
+    Ω_c::Real
+end
+struct BosonicBCF_Real <: BosonicBathCorrelationFunction 
+    specdens::Function
+    Temp::Real
+    Ω_c::Real
+end
+struct BosonicBCF_Imag <: BosonicBathCorrelationFunction 
+    specdens::Function
+    Temp::Real
+    Ω_c::Real
+end
+
 
 function make_bcf(specdens::Function, Temp::Real, Ω_c::Real)
     return t -> begin
@@ -9,19 +26,19 @@ end
 # Real part of a BCF for a time t.
 function bcf_re(specdens::Function, Temp::Real, Ω_c::Real, t::Real)
     if Temp == 0.0
-        integrand_0K(w) = specdens(w) * cos(w*t) / π
-        (res, err) = quadgk(w -> integrand_0K(w), 0.0, Ω_c * icm2ifs; atol=1e-12)
+        integrand_0K(ω) = specdens(ω; scale=icm2ifs) * cos(ω * t) / π
+        (res, err) = quadgk(ω -> integrand_0K(ω), 0.0, Ω_c * icm2ifs; atol=1e-12)
     else
-        beta = hbar * 1e15 / (kb * Temp)
-        integrand(w) = (specdens(w) / tanh(0.5*beta*w)) * cos(w*t) / π
-        (res, err) = quadgk(w -> integrand(w), 0.0, Ω_c * icm2ifs; atol=1e-12)
+        β = ħ * 1e15 / (kb * Temp)
+        integrand(ω) = (specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω*t) / π
+        (res, err) = quadgk(ω -> integrand(ω), 0.0, Ω_c * icm2ifs; atol=1e-12)
     end
     return res
 end
 
 # Imaginary part of a BCF for a time t.
 function bcf_im(specdens::Function, Ω_c::Real, t::Real)
-    integrand(w) = - specdens(w) * sin(w*t) / π
-    (res, err) = quadgk(w -> integrand(w), 0.0, Ω_c * icm2ifs; atol=1e-12)
+    integrand(ω) = - specdens(ω; scale=icm2ifs) * sin(ω * t) / π
+    (res, err) = quadgk(ω -> integrand(ω), 0.0, Ω_c * icm2ifs; atol=1e-12)
     return res
 end

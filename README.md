@@ -1,5 +1,6 @@
 # QFiND
 
+<!--![Static Badge](https://img.shields.io/badge/Version-v0.1.0-brightgreen)!-->
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://htkhsh.github.io/QFiND.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://htkhsh.github.io/QFiND.jl/dev/)
 [![Build Status](https://github.com/htkhsh/QFiND.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/htkhsh/QFiND.jl/actions/workflows/CI.yml?query=branch%3Amain)
@@ -20,16 +21,8 @@ The code allows for the estimation of frequencies and coefficients in the system
 
 ## Installation
 
-## Usage
-
-1. Set the required parameters in an input file `input.txt` (see below).  
-2. Run the main script:
-   ```
-   python ./src/qfind.py input.txt
-   ```
-3. The output will include the estimated frequencies and coefficients (saved as `omega_g.txt`), along with a plot of the resultant BCF (saved as `bcf.png`).
-
-## User Manual
+## Example Usage
+See `./examples`.
 
 
 ## Cite `QFiND`

@@ -1,5 +1,21 @@
+using QFiND
 using CairoMakie
 using LaTeXStrings 
+
+function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int)
+    w = range(Ω_min, Ω_max, length=N_freq) |> collect
+    j = sbeta.(w)
+    # Plot the spectral density and save the plot
+    fig = Figure()
+    ax = Axis(fig[1, 1],
+    xlabel = "Frequency (cm^-1)",
+    ylabel = "Spectral Density"
+    )
+    lines!(ax, w, j, label = "Spectral Density")
+    axislegend(ax)
+    save("quantum_noise_spectral_density.png", fig)
+    return
+
 
 function plot_bcf(t::AbstractVector{<:Real},
                   exact::AbstractVector{ComplexF64},

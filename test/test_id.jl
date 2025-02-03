@@ -17,19 +17,20 @@ using QFiND
     eps = 1e-4
     rank = 27
 
-    ple = PowerLawExpSD(s, alpha, gamc)
-    sdens = make_sdens(ple; scale=icm2ifs)
-    sbeta = make_sbeta(ple, Temp; scale=icm2ifs)
+    sdens = PowerLawExpSD(s, alpha, gamc)
+    sbeta = BosonicQNSD(sdens, Temp)
 
     bcf = make_bcf(sdens, Temp, Ω_c)
     res = id_discr(sbeta, bcf, N_t, N_w, Tc, Omega_min, Omega_max, eps)
-    wk = res.freq
-    gk = res.coef
-    calc_error(wk, gk, bcf, 500.0, 200)
+    @test !isnothing(res)
+    freq = res.freq
+    coef = res.coef
+    calc_error(freq, coef, bcf, Tc, N_t)
 
     res = id_discr(sbeta, bcf, N_t, N_w, Tc, Omega_min, Omega_max, rank)
-    wk = res.freq
-    gk = res.coef
-    calc_error(wk, gk, bcf, 500.0, 200)
+    @test !isnothing(res)
+    freq = res.freq
+    coef = res.coef
+    calc_error(freq, coef, bcf, Tc, N_t)
 
 end

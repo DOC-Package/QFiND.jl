@@ -1,7 +1,3 @@
-using LinearAlgebra
-using NonNegLeastSquares  
-using .Constants: icm2ifs
-
 """
     equispaced_mesh(N_t, N_w, tc, omega_min, omega_max)
 
@@ -46,13 +42,13 @@ function create_integrand(sbeta::Function, t::Vector{<:Real}, w::Vector{<:Real})
     # Fill first N_t rows (real part)
     for i in 1:N_t
         for j in 1:N_w
-            f[i, j] = sbeta(w[j]) * cos(w[j] * t[i])
+            f[i, j] = sbeta(w[j]; scale=icm2ifs) * cos(w[j] * t[i])
         end
     end
     # Fill next N_t rows (imaginary part)
     for i in (N_t+1):(2*N_t)
         for j in 1:N_w
-            f[i, j] = -sbeta(w[j]) * sin(w[j] * t[i - N_t])
+            f[i, j] = -sbeta(w[j]; scale=icm2ifs) * sin(w[j] * t[i - N_t])
         end
     end
 
@@ -143,7 +139,7 @@ function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc
     end
 
     # Coefficients
-    gk = zk .* sbeta.(wk)
+    gk = zk .* sbeta.(wk; scale=icm2ifs)
 
     # Rescale the frequencies and coefficients
     wk = wk ./ icm2ifs
@@ -188,7 +184,7 @@ function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc
     end
 
     # Coefficients
-    gk = zk .* sbeta.(wk)
+    gk = zk .* sbeta.(wk; scale=icm2ifs)
 
     # Rescale the frequencies and coefficients
     wk = wk ./ icm2ifs
