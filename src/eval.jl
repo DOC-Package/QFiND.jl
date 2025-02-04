@@ -2,7 +2,7 @@
 Calculate the error between the approximated and exact correlation functions.
 """
 function calc_error(
-    wk::AbstractVector{Float64}, 
+    ωk::AbstractVector{Float64}, 
     gk::AbstractVector{Float64}, 
     bcf::Function, 
     Tc::Real, 
@@ -10,7 +10,7 @@ function calc_error(
 
     t = range(0, Tc, length=N_t)
     reference = bcf.(t)
-    approx = sumexp.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = sumexp.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
     error = approx - reference
     
     # Compute the normalized errors.

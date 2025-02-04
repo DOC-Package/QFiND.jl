@@ -1,5 +1,5 @@
 """
-    equispaced_mesh(N_t, N_w, tc, omega_min, omega_max)
+    equispaced_mesh(N_t, N_w, tc, Ω_min, Ω_max)
 
 Generate equispaced time and frequency grids.
 
@@ -7,17 +7,17 @@ Generate equispaced time and frequency grids.
 - `N_t::Integer`: Number of time points.
 - `N_w::Integer`: Number of frequency points.
 - `tc::Real`: Maximum time value.
-- `omega_min::Real`: Minimum frequency value.
-- `omega_max::Real`: Maximum frequency value.
+- `Ω_min::Real`: Minimum frequency value.
+- `Ω_max::Real`: Maximum frequency value.
 
 # Returns
 A tuple `(t, w)` where
 - `t` is a vector of time points (length `N_t`),
 - `w` is a vector of frequency points (length `N_w`), scaled by `icm2ifs`.
 """
-function equispaced_mesh(N_t::Integer, N_w::Integer, tc::Real, omega_min::Real, omega_max::Real)
+function equispaced_mesh(N_t::Integer, N_w::Integer, tc::Real, Ω_min::Real, Ω_max::Real)
     t = collect(range(0, tc, length=N_t))
-    w = collect(range(omega_min, omega_max, length=N_w))
+    w = collect(range(Ω_min, Ω_max, length=N_w))
     w = [ω * icm2ifs for ω in w]
     return t, w
 end
@@ -84,7 +84,7 @@ function nnls_weight(bcf::Function, t::Vector{<:Real}, B::AbstractMatrix{<:Real}
 end
 
 """
-    id_discr(N_t, N_w, tc, omega_min, omega_max, eps, frank; rand=false)
+    id_discr(N_t, N_w, tc, Ω_min, Ω_max, eps, frank; rand=false)
 
 Estimate the frequencies and coefficients using interpolative decomposition (ID) and NNLS.
 
@@ -93,8 +93,8 @@ Estimate the frequencies and coefficients using interpolative decomposition (ID)
 - `N_t::Integer`: Number of time points.
 - `N_w::Integer`: Number of frequency points.
 - `tc::Real`: Maximum time value.
-- `omega_min::Real`: Minimum frequency value.
-- `omega_max::Real`: Maximum frequency value.
+- `Ω_min::Real`: Minimum frequency value.
+- `Ω_max::Real`: Maximum frequency value.
 - `eps::Real`: Error tolerance for ID (used when `frank < 1`).
 - `frank`: Desired rank for the ID. If `frank < 1`, the algorithm uses `eps` to choose the rank.
 - `rand::Bool` (optional): Whether to use a randomized ID algorithm. Default is `false`.
@@ -106,9 +106,9 @@ A tuple `(Nsp, wk, zk, frank)` where:
 - `zk` is the vector of estimated coefficients,
 - `frank` is the rank actually used.
 """
-function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc::Real, omega_min::Real, omega_max::Real, eps::Real; rand::Bool=false)
+function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc::Real, Ω_min::Real, Ω_max::Real, eps::Real; rand::Bool=false)
     # Generate equispaced time and frequency meshes.
-    t, w = equispaced_mesh(N_t, N_w, tc, omega_min, omega_max)
+    t, w = equispaced_mesh(N_t, N_w, tc, Ω_min, Ω_max)
 
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, w)
@@ -152,9 +152,9 @@ function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc
     return (nsp=Nsp, freq=wk, coef=gk, frank=frank)
 end
 
-function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc::Real, omega_min::Real, omega_max::Real, frank::Int; rand::Bool=false)
+function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_w::Integer, tc::Real, Ω_min::Real, Ω_max::Real, frank::Int; rand::Bool=false)
     # Generate equispaced time and frequency meshes.
-    t, w = equispaced_mesh(N_t, N_w, tc, omega_min, omega_max)
+    t, w = equispaced_mesh(N_t, N_w, tc, Ω_min, Ω_max)
     
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, w)
