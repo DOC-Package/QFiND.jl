@@ -8,7 +8,7 @@ makedocs(;
     authors="Hideaki Takahashi <takahashi.hideaki.w33@kyoto-u.jp> and contributors",
     sitename="QFiND.jl",
     format=Documenter.HTML(;
-        canonical="https://htkhsh.github.io/QFiND.jl",
+        canonical="https://doc-package.github.io/QFiND.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -18,6 +18,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/htkhsh/QFiND.jl",
+    repo="github.com/DOC-Package/QFiND.jl",
     devbranch="main",
 )
