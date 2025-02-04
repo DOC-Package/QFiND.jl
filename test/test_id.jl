@@ -9,11 +9,10 @@ using QFiND
     gamc = 50.0
     Temp = 300.0
     Ω_c = 1000.0
-    Omega_min = -400.0
-    Omega_max = 400.0
+    Ω_min = -400.0
+    Ω_max = 400.0
     N_w = 2000
-    Msp = 50
-    Tc = 500.0
+    T_c = 500.0
     N_t = 200
     eps = 1e-4
     rank = 27
@@ -22,17 +21,17 @@ using QFiND
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
 
-    res = id_discr(sbeta, bcf, N_t, N_w, Tc, Omega_min, Omega_max, eps)
+    res = id_discr(sbeta, bcf, N_t, N_w, T_c, Ω_min, Ω_max, eps)
     @test !isnothing(res)
     freq = res.freq
     coef = res.coef
-    calc_error(freq, coef, bcf, Tc, N_t)
+    calc_error(freq, coef, bcf, T_c, N_t)
 
-    res = id_discr(sbeta, bcf, N_t, N_w, Tc, Omega_min, Omega_max, rank)
+    res = id_discr(sbeta, bcf, N_t, N_w, T_c, Ω_min, Ω_max, rank)
     @test !isnothing(res)
     freq = res.freq
     coef = res.coef
-    calc_error(freq, coef, bcf, Tc, N_t)
-    plot_bcf(freq, coef, bcf, Tc, N_t)
+    calc_error(freq, coef, bcf, T_c, N_t)
+    plot_bcf(freq, coef, bcf, T_c, N_t)
 
 end
