@@ -1,21 +1,21 @@
 """
-    Lanczos algorithm for the computation of the first N recurrence
+    ab = lanczos(xw, N)
 
-    Given the discrete inner product whose nodes are contained 
-    in the first column, and whose weights are contained in the 
-    second column, of the (Ncap)x2 array xw, the call
+Lanczos algorithm for the computation of the first N recurrence
 
-        ab = lanczos(xw, N)
+Given the discrete inner product whose nodes are contained 
+in the first column, and whose weights are contained in the 
+second column, of the (Ncap)x2 array xw, the call
 
-    generates the first N recurrence coefficients ab of the 
-    corresponding discrete orthogonal polynomials. The N alpha-
-    coefficients are stored in the first column, the N beta-
-    coefficients in the second column, of the Nx2 array ab.
+generates the first N recurrence coefficients ab of the 
+corresponding discrete orthogonal polynomials. The N alpha-
+coefficients are stored in the first column, the N beta-
+coefficients in the second column, of the Nx2 array ab.
 
-    The code is adapted from the routine RKPW in
-    W.B. Gragg and W.J. Harrod, "The numerically stable 
-    reconstruction of Jacobi matrices from spectral data", 
-    Numer. Math. 44 (1984), 317-335.
+The code is adapted from the routine RKPW in
+W.B. Gragg and W.J. Harrod, "The numerically stable 
+reconstruction of Jacobi matrices from spectral data", 
+Numer. Math. 44 (1984), 317-335.
 """
 
 function lanczos(xw::AbstractArray{Float64,2}, N::Int)
@@ -101,10 +101,10 @@ end
 
 Compute the discretization of the QNSD using the BSDO method.
 """
-function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, N_ω::Int, M_sp::Int)
+function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, M_sp::Int; nlanczos::Int=1000)
 
     # Generate the frequencies
-    ω = range(Ω_min, Ω_max, length=N_ω) |> collect
+    ω = range(Ω_min, Ω_max, length=nlanczos) |> collect
 
     # Compute the quantum noise spectral density
     S = sbeta.(ω)
@@ -114,7 +114,7 @@ function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, N_ω::Int, M_sp
     ωS = hcat(ω, S)
 
     # Discretize
-    freq, coef = orthpoly_discretization(ωS, M_sp)
+    ωk, gk = orthpoly_discretization(ωS, M_sp)
 
     # Normalize zk
     if Ω_min < 0
@@ -124,7 +124,37 @@ function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, N_ω::Int, M_sp
     else
         norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max)
     end
-    coef .*= norm
+    gk .*= norm
 
-    return (freq = freq, coef = coef)
+    return (freq = ωk, coef = gk)
+end
+
+"""
+    bsdo(sbeta, ω::AbstractVector{Float64}, M_sp::Int)
+
+Compute the discretization of the QNSD using the BSDO method.
+"""
+function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, M_sp::Int)
+
+    # Compute the quantum noise spectral density
+    S = sbeta.(ω)
+    S = max.(S, 0.0)
+
+    # Combine w and j into a 2D array
+    ωS = hcat(ω, S)
+
+    # Discretize
+    ωk, gk = orthpoly_discretization(ωS, M_sp)
+
+    # Normalize zk
+    if Ω_min < 0
+        norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0)
+        norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max)
+        norm = norm1 + norm2
+    else
+        norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max)
+    end
+    gk .*= norm
+
+    return (freq = ωk, coef = gk)
 end

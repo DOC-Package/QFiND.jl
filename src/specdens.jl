@@ -25,35 +25,35 @@ end
 
 
 """
-    (sd::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
+    (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
 Compute the spectral density for the Power-law with exponential cutoff model.
 """
-function (sd::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
+function (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
     ω = abs(ω)
-    s = sd.s
-    α = sd.α
-    γ = sd.γ * scale
+    s = specdens.s
+    α = specdens.α
+    γ = specdens.γ * scale
     return sgn * π * α * γ^(1.0 - s) * ω^s * exp(-ω / γ)
 end
 
 
 """
-    (sd::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) -> Float64
+    (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
 Compute the spectral density for the Tannor-Meyer model.
 """
-function (sd::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
+function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
     ω = abs(ω)
-    Ω = sd.Ω .* scale
-    Γ = sd.Γ .* scale
-    λ = sd.λ .* scale
+    Ω = specdens.Ω .* scale
+    Γ = specdens.Γ .* scale
+    λ = specdens.λ .* scale
     res = 0.0
-    for i in eachindex(sd.Ω)
-        p    = 4.0 * sd.Γ[i] * sd.λ[i] * (sd.Ω[i]^2 + sd.Γ[i]^2)
-        deno = ((ω + sd.Ω[i])^2 + sd.Γ[i]^2) * ((ω - sd.Ω[i])^2 + sd.Γ[i]^2)
+    for i in eachindex(specdens.Ω)
+        p    = 4.0 * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
+        deno = ((ω + specdens.Ω[i])^2 + specdens.Γ[i]^2) * ((ω - specdens.Ω[i])^2 + specdens.Γ[i]^2)
         res += p * ω / deno
     end
     return sgn*res
@@ -61,20 +61,20 @@ end
 
 
 """
-    (sd::BrownianSD)(ω::Float64; scale::Float64=1.0) -> Float64
+    (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
 Compute the spectral density for the Brownian oscillator model.
 """
-function (sd::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
+function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
     ω = abs(ω)
-    Ω = sd.Ω .* scale
-    Γ = sd.Γ .* scale
-    λ = sd.λ .* scale
+    Ω = specdens.Ω .* scale
+    Γ = specdens.Γ .* scale
+    λ = specdens.λ .* scale
     res = 0.0
-    for i in eachindex(sd.Ω)
-        p    = 2.0 * sd.Γ[i] * sd.λ[i] * sd.Ω[i]^2
-        deno = (ω^2 - sd.Ω[i]^2)^2 + (sd.Γ[i]^2 * ω^2)
+    for i in eachindex(specdens.Ω)
+        p    = 2.0 * specdens.Γ[i] * specdens.λ[i] * specdens.Ω[i]^2
+        deno = (ω^2 - specdens.Ω[i]^2)^2 + (specdens.Γ[i]^2 * ω^2)
         res += p * ω / deno
     end
     return sgn*res
@@ -86,7 +86,7 @@ abstract type QuantumNoiseSpectralDensity <: Function end
 
 # Bosonic QNSD
 struct BosonicQNSD <: QuantumNoiseSpectralDensity
-    sd :: SpectralDensity  
+    specdens :: SpectralDensity  
     Temp :: Float64          
 end
 
@@ -98,10 +98,10 @@ end
 function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0)
     β = ħ * 1e15 / (kb * b.Temp)
     if b.Temp == 0.0
-        return (b.sd)(ω; scale=scale) / π
+        return (b.specdens)(ω; scale=scale) / π
     else
         factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / (2π)
-        return (b.sd)(ω; scale=scale) * factor
+        return (b.specdens)(ω; scale=scale) * factor
     end
 end
 
@@ -110,11 +110,11 @@ end
 # Fermionic QNSD
 abstract type FermionicQNSD <: QuantumNoiseSpectralDensity end
 struct FermionicQNSD_Plus <: FermionicQNSD 
-    sd :: SpectralDensity
+    specdens :: SpectralDensity
     Temp :: Float64      
 end
 struct FermionicQNSD_Minus <: FermionicQNSD
-    sd :: SpectralDensity
+    specdens :: SpectralDensity
     Temp :: Float64      
 end
 

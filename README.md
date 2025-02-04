@@ -5,7 +5,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://doc-package.github.io/QFiND.jl/dev/)
 [![Build Status](https://github.com/DOC-Package/QFiND.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/DOC-Package/QFiND.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
-QFiND (Quantum Finite-temperature Noise Discretizer) provides routines for constructing an effective discrete representation of a system-bath model. In other words, this codes provides an approximation of the bath correlation function $C(t)$ for a given spectral density $J(\omega)$
+QFiND (Quantum Finite-temperature Noise Discretizer and Decomposer) provides routines for constructing an effective discrete representation of a system-bath model. In other words, this codes provides an approximation of the bath correlation function $C(t)$ for a given spectral density $J(\omega)$
 
 $$
 \begin{aligned}
