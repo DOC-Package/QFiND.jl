@@ -1,9 +1,9 @@
 module QFiND
 
 export icm2ifs
-export sumexp, equispaced_grid, calc_error
+export sumexp, equispaced_grid, evaluate_error
 export DiscretizationMethod, DiscrID, DiscrBSDO
-export DiscreteDataSet, DiscreteDataSetID, DiscreteData
+export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD
 export QuantumNoiseSpectralDensity, BosonicQNSD, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
@@ -22,7 +22,7 @@ include("corrfunc.jl")
 include("bsdo.jl")
 include("id_sub.jl")
 include("id.jl")
-include("eval.jl")
+include("evaluate.jl")
 
 using LinearAlgebra
 using LowRankApprox

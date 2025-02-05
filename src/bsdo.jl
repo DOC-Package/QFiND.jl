@@ -96,38 +96,6 @@ function orthpoly_discretization(wj::Array{Float64,2}, N::Int)
     return wd, zd
 end
 
-"""
-    bsdo(sbeta, Ω_min::Real, Ω_max::Real, N_ω::Int, M_sp::Int)
-
-Compute the discretization of the QNSD using the BSDO method.
-"""
-function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, M_sp::Int; nlanczos::Int=1000)
-
-    # Generate the frequencies
-    ω = range(Ω_min, Ω_max, length=nlanczos) |> collect
-
-    # Compute the quantum noise spectral density
-    S = sbeta.(ω)
-    S = max.(S, 0.0)
-
-    # Combine w and j into a 2D array
-    ωS = hcat(ω, S)
-
-    # Discretize
-    ωk, gk = orthpoly_discretization(ωS, M_sp)
-
-    # Normalize zk
-    if Ω_min < 0
-        norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0)
-        norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max)
-        norm = norm1 + norm2
-    else
-        norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max)
-    end
-    gk .*= norm
-
-    return (freq = ωk, coef = gk)
-end
 
 """
     bsdo(sbeta, ω::AbstractVector{Float64}, M_sp::Int)
@@ -157,4 +125,13 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, M_sp::Int)
     gk .*= norm
 
     return (freq = ωk, coef = gk)
+end
+
+
+function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, M_sp::Int; n_lanczos::Int=1000)
+
+    # Generate the frequencies
+    ω = range(Ω_min, Ω_max, length=n_lanczos) |> collect
+
+    return bsdo_discr(sbeta, ω, M_sp)
 end

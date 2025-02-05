@@ -11,7 +11,7 @@ Construct the matrix `f` to be decomposed. The matrix has size `(2*N_t, N_ω)`.
 # Returns
 A real matrix `f` of size `(2*N_t, N_ω)`.
 """
-function create_integrand(sbeta::Function, t::Vector{<:Real}, ω::Vector{<:Real})
+function create_integrand(sbeta::Function, t::Vector{<:Real}, ω::Vector{<:Real}) :: Matrix{Float64}
     N_t = length(t)
     N_ω = length(ω)
     f = zeros(Float64, 2*N_t, N_ω)
@@ -140,7 +140,7 @@ A tuple `(Nsp, wk, zk, frank)` where:
 - `zk` is the vector of estimated coefficients,
 - `frank` is the rank actually used.
 """
-function id_discr(dataset::DiscreteDataSetID, eps::Real; rand::Bool=false)
+function id_discr(dataset::InitialDataSetID, eps::Real; rand::Bool=false)
    
     # Create the core matrix f.
     fmat = create_integrand(dataset.qnsd, dataset.time, dataset.freq)

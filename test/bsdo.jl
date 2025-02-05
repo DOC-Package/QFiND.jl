@@ -3,8 +3,6 @@ using Test
 using CairoMakie
 using QFiND
 
-
-
 @testset "bsdo.jl" begin
     
     s = 1.0
@@ -22,12 +20,13 @@ using QFiND
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
+    dataset = InitialData(DiscrBSDO(), sbeta, Ω_min, Ω_max; n_lanczos=N_w)
 
-    res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; nlanczos=N_w)
+    res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_w)
     wk = res.freq
     gk = res.coef
     @test !isnothing(res)
-    calc_error(wk, gk, bcf, T_c, N_t)
+    evaluate_error(wk, gk, bcf, T_c, N_t)
 
     plot_bcf(wk, gk, bcf, T_c, N_t)
 
