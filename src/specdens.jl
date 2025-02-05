@@ -23,6 +23,9 @@ struct BrownianSD <: SpectralDensity
     λ :: Vector{Float64}  # vector of coupling strengths
 end
 
+struct AAAfittedSD <: SpectralDensity
+    bary::Barycentric
+end
 
 """
     (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
@@ -80,6 +83,18 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return sgn*res
 end
 
+"""
+    (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the spectral density for the Brownian oscillator model.
+"""
+function (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ω = abs(ω) / scale
+    res = evaluate(specdens.bary, ω)
+    return sgn * scale * res
+end
+
 
 # Define Abstract Type for the QNSD
 abstract type QuantumNoiseSpectralDensity <: Function end
@@ -95,7 +110,7 @@ end
 
 """
 
-function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0)
+function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
     β = ħ * 1e15 / (kb * b.Temp)
     if b.Temp == 0.0
         return (b.specdens)(ω; scale=scale) / π

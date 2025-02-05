@@ -22,14 +22,13 @@ using QFiND
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
-    #plot_qnsd(sbeta, Ω_min, Ω_max, N_ω)
 
     res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; nlanczos=N_w)
     wk = res.freq
     gk = res.coef
     @test !isnothing(res)
-
     calc_error(wk, gk, bcf, T_c, N_t)
+
     plot_bcf(wk, gk, bcf, T_c, N_t)
 
 end

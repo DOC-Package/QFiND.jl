@@ -1,15 +1,23 @@
 abstract type BathCorrelationFunction <: Function end
+
+# 
 abstract type BosonicBathCorrelationFunction <: BathCorrelationFunction end
+
+# Bosonic BCF with real and imaginary parts
 struct BosonicBCF <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
     Ω_c::Real
 end
+
+# Bosonic BCF with real part only
 struct BosonicBCF_Real <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
     Ω_c::Real
 end
+
+# Bosonic BCF with imaginary part only
 struct BosonicBCF_Imag <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
@@ -57,12 +65,18 @@ function (b::BosonicBCF_Imag)(t::Real) :: Float64
     return A
 end
 
+
+# Fermionic BCF
 abstract type FermionicBathCorrelationFunction <: BathCorrelationFunction end
+
+# 
 struct FermionicBCF_Plus <: FermionicBathCorrelationFunction 
     specdens::Function
     Temp::Real
     Ω_c::Real
 end
+
+#
 struct FermionicBCF_Minus <: FermionicBathCorrelationFunction 
     specdens::Function
     Temp::Real

@@ -31,6 +31,26 @@ function create_integrand(sbeta::Function, t::Vector{<:Real}, ω::Vector{<:Real}
     return f
 end
 
+function create_integrand(sbeta::Vector{<:Real}, t::Vector{<:Real}, ω::Vector{<:Real}) :: Matrix{Float64}
+    N_t = length(t)
+    N_ω = length(ω)
+    f = zeros(Float64, 2*N_t, N_ω)
+    # Fill first N_t rows (real part)
+    for i in 1:N_t
+        for j in 1:N_ω
+            f[i, j] = sbeta[j] * cos(ω[j] * t[i])
+        end
+    end
+    # Fill next N_t rows (imaginary part)
+    for i in (N_t+1):(2*N_t)
+        for j in 1:N_ω
+            f[i, j] = -sbeta[j] * sin(ω[j] * t[i - N_t])
+        end
+    end
+
+    return f
+end
+
 """
     nnls_weight(t, B)
 
@@ -46,7 +66,7 @@ problem.
 - `g` is the vector of estimated coefficients (of length `r`),
 - `err` is the residual norm from the NNLS solve.
 """
-function nnls_weight(bcf::Function, t::Vector{<:Real}, B::AbstractMatrix{<:Real})
+function nnls_weight(bcf::Function, t::Vector{<:Real}, B::AbstractMatrix{<:Real}) 
     N_t = length(t)
     cc = bcf.(t)
     # Construct the vector c = [real(cc); imag(cc)].
@@ -54,12 +74,12 @@ function nnls_weight(bcf::Function, t::Vector{<:Real}, B::AbstractMatrix{<:Real}
     c[1:N_t] .= real.(cc)
     c[N_t+1:2*N_t] .= imag.(cc)
     # Solve the NNLS problem: minimize ||B*g - c|| subject to g ≥ 0.
-    g = nonneg_lsq(B, c; alg=:nnls)
+    g = nonneg_lsq(B, c; alg=:nnls) |> vec
     err = norm(B * g - c)
     return g, err
 end
 
-function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B::AbstractMatrix{<:Real})
+function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B::AbstractMatrix{<:Real}) 
     N_t = length(t)
     # check if cc has the correct length
     if length(cc) != N_t
@@ -70,9 +90,31 @@ function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B
     c[1:N_t] .= real.(cc)
     c[N_t+1:2*N_t] .= imag.(cc)
     # Solve the NNLS problem: minimize ||B*g - c|| subject to g ≥ 0.
-    g = nonneg_lsq(B, c; alg=:nnls)
+    g = nonneg_lsq(B, c; alg=:nnls) |> vec
     err = norm(B * g - c)
     return g, err
+end
+
+function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Real})
+    # Sort frequencies and corresponding coefficients in ascending order
+    perm = sortperm(wk)
+    wk = wk[perm]
+    gk = gk[perm]
+    
+    Nsp = length(wk)
+    # Remove any zero coefficients.
+    if minimum(gk) == 0.0
+        keep = findall(x -> x > 0.0, gk)
+        wk = wk[keep]
+        gk = gk[keep]
+        Nsp = length(wk)
+    end
+
+    # Rescale the frequencies and coefficients
+    wk = wk ./ icm2ifs
+    gk = gk ./ icm2ifs^2.0
+    
+    return Nsp, wk, gk
 end
 
 """
@@ -98,13 +140,40 @@ A tuple `(Nsp, wk, zk, frank)` where:
 - `zk` is the vector of estimated coefficients,
 - `frank` is the rank actually used.
 """
-function id_discr(sbeta::Function, bcf::Function, t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+function id_discr(dataset::DiscreteDataSetID, eps::Real; rand::Bool=false)
    
+    # Create the core matrix f.
+    fmat = create_integrand(dataset.qnsd, dataset.time, dataset.freq)
+    
+    # Perform the Interpolative Decomposition (ID).
+    println("Starting ID")
+    frank, idx, B, err1 = id_freq(fmat, eps, rand)
+    println("Rank of f: ", frank)
+    
+    # Estimated frequencies: use the first frank_final indices.
+    wk = dataset.freq[idx[1:frank]]
+    
+    # Estimate weights via NNLS
+    zk, err2 = nnls_weight(dataset.bcf, dataset.time, B)
+    gk = zk .* dataset.qnsd[idx[1:frank]]
+    println(typeof(zk))
+    println(typeof(gk))
+
+    Nsp, wk, gk = sort_and_rescale(wk, gk)
+    
+    println("Number of sample points: ", Nsp)
+    println("Error in ID: ", err1)
+    println("Error in NNLS: ", err2)
+    
+    return (nsp=Nsp, freq=wk, coef=gk, frank=frank)
+end
+
+function id_discr(sbeta::Function, bcf::Function, t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
     
     # Perform the Interpolative Decomposition (ID).
-    println("Starting ID")
     frank, idx, B, err1 = id_freq(fmat, eps, rand)
     println("Rank of f: ", frank)
     
@@ -113,33 +182,15 @@ function id_discr(sbeta::Function, bcf::Function, t::AbstractVector{<:Real}, ω:
     
     # Estimate weights via NNLS
     zk, err2 = nnls_weight(bcf, t, B)
-    
-    # Sort frequencies and corresponding coefficients in ascending order
-    perm = sortperm(wk)
-    wk = wk[perm]
-    zk = zk[perm]
-    
-    Nsp = frank
-    # Remove any zero coefficients.
-    if minimum(zk) == 0.0
-        keep = findall(x -> x > 0.0, zk)
-        wk = wk[keep]
-        zk = zk[keep]
-        Nsp = length(wk)
-    end
-
-    # Coefficients
     gk = zk .* sbeta.(wk; scale=icm2ifs)
-
-    # Rescale the frequencies and coefficients
-    wk = wk ./ icm2ifs
-    gk = gk ./ icm2ifs^2.0
+    
+    Nsp, wk, gk = sort_and_rescale(wk, gk)
     
     println("Number of sample points: ", Nsp)
     println("Error in ID: ", err1)
     println("Error in NNLS: ", err2)
     
-    return (nsp=Nsp, freq=wk, coef=gk, frank=frank)
+    return (nsp=Nsp, freq=wk, coef=gk)
 end
 
 function id_discr(sbeta::Function, bcf::Function, t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
@@ -156,27 +207,9 @@ function id_discr(sbeta::Function, bcf::Function, t::AbstractVector{<:Real}, ω:
     
     # Estimate weights via NNLS
     zk, err2 = nnls_weight(bcf, t, B)
-    
-    # Sort frequencies and corresponding coefficients in ascending order
-    perm = sortperm(wk)
-    wk = wk[perm]
-    zk = zk[perm]
-    
-    Nsp = frank
-    # Remove any zero coefficients.
-    if minimum(zk) == 0.0
-        keep = findall(x -> x > 0.0, zk)
-        wk = wk[keep]
-        zk = zk[keep]
-        Nsp = length(wk)
-    end
-
-    # Coefficients
     gk = zk .* sbeta.(wk; scale=icm2ifs)
-
-    # Rescale the frequencies and coefficients
-    wk = wk ./ icm2ifs
-    gk = gk ./ icm2ifs^2.0
+    
+    Nsp, wk, gk = sort_and_rescale(wk, gk)
     
     println("Number of sample points: ", Nsp)
     println("Error in ID: ", err1)
@@ -187,14 +220,14 @@ end
 
 function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_ω::Integer, tc::Real, Ω_min::Real, Ω_max::Real, eps::Real; rand::Bool=false)
     # Generate equispaced time and frequency grids.
-    t, ω = equispaced_grid(N_t, N_ω, tc, Ω_min, Ω_max)
+    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     
     return id_discr(sbeta, bcf, t, ω, eps; rand=rand)
 end
 
 function id_discr(sbeta::Function, bcf::Function, N_t::Integer, N_ω::Integer, tc::Real, Ω_min::Real, Ω_max::Real, frank::Int; rand::Bool=false)
     # Generate equispaced time and frequency grids.
-    t, ω = equispaced_grid(N_t, N_ω, tc, Ω_min, Ω_max)
+    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
 
     return id_discr(sbeta, bcf, t, ω, frank; rand=rand)
 end

@@ -20,18 +20,25 @@ using QFiND
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
+    dataset = DiscreteData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
+
+    res = id_discr(dataset, eps)
+    @test !isnothing(res)
+    freq = res.freq
+    coef = res.coef
+    evaluate_error(freq, coef, bcf, T_c, N_t)
 
     res = id_discr(sbeta, bcf, N_t, N_w, T_c, Ω_min, Ω_max, eps)
     @test !isnothing(res)
     freq = res.freq
     coef = res.coef
-    calc_error(freq, coef, bcf, T_c, N_t)
+    evaluate_error(freq, coef, bcf, T_c, N_t)
 
     res = id_discr(sbeta, bcf, N_t, N_w, T_c, Ω_min, Ω_max, rank)
     @test !isnothing(res)
     freq = res.freq
     coef = res.coef
-    calc_error(freq, coef, bcf, T_c, N_t)
+    evaluate_error(freq, coef, bcf, T_c, N_t)
     plot_bcf(freq, coef, bcf, T_c, N_t)
 
 end
