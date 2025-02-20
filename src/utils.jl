@@ -1,10 +1,5 @@
 # Description: Utility functions for the project
 
-"""
-    equispaced_mesh(N_t, N_ω, tc, Ω_min, Ω_max)
-
-Generate equispaced time and frequency grids.
-"""
 function equispaced_grid(
     Ω_min::Real, 
     Ω_max::Real, 

@@ -121,18 +121,28 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
 end
 
 
-
 # Fermionic QNSD
 abstract type FermionicQNSD <: QuantumNoiseSpectralDensity end
 struct FermionicQNSD_Plus <: FermionicQNSD 
     specdens :: SpectralDensity
     Temp :: Float64      
+    ChemPot :: Float64
 end
 struct FermionicQNSD_Minus <: FermionicQNSD
     specdens :: SpectralDensity
-    Temp :: Float64      
+    Temp :: Float64    
+    ChemPot :: Float64  
 end
 
+function (f::FermionicQNSD_Plus)(ω::Float64; scale::Float64=1.0) :: Float64
+    β = ħ * 1e15 / (kb * f.Temp)
+    if b.Temp == 0.0
+        return (b.specdens)(ω; scale=scale) / π
+    else
+        factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / (2π)
+        return (b.specdens)(ω; scale=scale) * factor
+    end
+end
 
 
 

@@ -1,5 +1,5 @@
 """
-    id_freq_eps(f, eps, rnd)
+    id_freq_eps(f::AbstractMatrix{Float64}, eps::Real, rnd::Bool)
 
 Perform interpolative decomposition on matrix `f` with error tolerance `eps`.
 
@@ -36,7 +36,7 @@ function id_freq(f::AbstractMatrix{Float64}, eps::Real, rnd::Bool)
 end
 
 """
-    id_freq_rank(f, frank, rnd)
+    id_freq_rank(f::AbstractMatrix{Float64}, frank::Int, rnd::Bool)
 
 Perform interpolative decomposition on matrix `f` with a specified rank `frank`.
 
