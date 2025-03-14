@@ -8,12 +8,18 @@ function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int)
     # Plot the spectral density and save the plot
     fig = Figure()
     ax = Axis(fig[1, 1],
-    xlabel = "Frequency (cm^-1)",
-    ylabel = "Spectral Density"
+    xlabel = L"\text{Frequency} (\mathrm{cm^{-1}})",
+    ylabel = L"\text{Spectral Density}",
+    xlabelsize=20,
+    ylabelsize=20,
+    xgridvisible = false,
+    ygridvisible = false,
     )
-    lines!(ax, w, j, label = "Spectral Density")
-    axislegend(ax)
-    save("quantum_noise_spectral_density.png", fig)
+    lines!(ax, w, j, color = :red, linewidth = 2)
+    xlims!(ax, (Ω_min, Ω_max))
+    ylims!(ax, (0, nothing))
+    #axislegend(ax)
+    save("qnsd.png", fig)
 end
 
 function plot_bcf(

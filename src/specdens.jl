@@ -27,6 +27,10 @@ struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
 end
 
+struct WideBandSD <: SpectralDensity
+    Γ :: Float64
+end
+
 """
     (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
