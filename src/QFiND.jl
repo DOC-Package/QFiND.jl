@@ -10,7 +10,7 @@ export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag
 export FermionicBCF_Plus, FermionicBCF_Minus
-export bsdo_discr, id_discr
+export bsdo_discr, id_discr, id_discr_c, svd_basis_decomp
 
 import RationalFunctionApproximation: Barycentric
 
@@ -22,6 +22,8 @@ include("corrfunc.jl")
 include("bsdo.jl")
 include("id_sub.jl")
 include("id.jl")
+include("idc.jl")
+include("svd.jl")
 include("evaluate.jl")
 
 using LinearAlgebra
