@@ -31,5 +31,6 @@ using LowRankApprox
 using NonNegLeastSquares
 using QuadGK 
 using RationalFunctionApproximation
+using ExpFit
 
 end
