@@ -63,7 +63,7 @@ function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
         deno = ((ω + specdens.Ω[i])^2 + specdens.Γ[i]^2) * ((ω - specdens.Ω[i])^2 + specdens.Γ[i]^2)
         res += p * ω / deno
     end
-    return sgn*res
+    return sgn * res
 end
 
 
@@ -84,7 +84,7 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
         deno = (ω^2 - specdens.Ω[i]^2)^2 + (specdens.Γ[i]^2 * ω^2)
         res += p * ω / deno
     end
-    return sgn*res
+    return sgn * res
 end
 
 """

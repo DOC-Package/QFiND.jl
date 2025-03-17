@@ -13,7 +13,7 @@ function padeN_Nm1(nlt::Int)
     # Compute eigenvalues of LAM.
     evals = eigvals(LAM)
     evals_sorted = sort(evals)
-    xik = [2 / real(evals_sorted[2*nlt - n + 1]) for n in 1:nlt]
+    xik = [2.0 / real(evals_sorted[2*nlt - n + 1]) for n in 1:nlt]
 
     # Build LAMt (size: (2*nlt-1)×(2*nlt-1))
     LAMt = zeros(Float64, 2*nlt-1, 2*nlt-1)
@@ -25,7 +25,7 @@ function padeN_Nm1(nlt::Int)
 
     evalt = eigvals(LAMt)
     evalt_sorted = sort(evalt)
-    zeta_vec = [2 / real(evalt_sorted[2*nlt-1 - n + 1]) for n in 1:(nlt-1)]
+    zeta_vec = [2.0 / real(evalt_sorted[2*nlt - n]) for n in 1:(nlt-1)]
 
     # Compute etak:
     etak = zeros(Float64, nlt)
@@ -58,9 +58,9 @@ function padeN_N(nlt::Int)
             LAM[m, n] = (δ(m,n+1) + δ(m,n-1)) / sqrt(bn(m) * bn(n))
         end
     end
-    evals = eigen(LAM).values
+    evals = eigvals(LAM)
     evals_sorted = sort(evals)  # ascending order
-    xik = [ 2.0 / evals_sorted[2*nlt+2 - n] for n in 1:nlt ]
+    xik = [2.0 / real(evals_sorted[2*nlt+2 - n]) for n in 1:nlt ]
     
     # Allocate LAMt of size (2*nlt-1)×(2*nlt-1)
     LAMt = zeros(2*nlt-1, 2*nlt-1)

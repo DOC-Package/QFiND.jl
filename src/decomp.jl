@@ -1,5 +1,4 @@
-function time_domain_decomp(bcf::BosonicBathCorrelationFunction, N_t::Integer, tc::Real)
-    t = collect(range(0, tc, length=N_t))
-    cc = bcf.(t)
-    
-end
+function esprit_decomp(bcf::BosonicBathCorrelationFunction, N_t::Integer, tc::Real, eps::Real) 
+    ef = esprit(bcf, 0.0, tc, N_t, eps)
+    return (expon=ef.expon, coeff=ef.coeff)
+end 

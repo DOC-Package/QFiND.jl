@@ -24,6 +24,12 @@ struct BosonicBCF_Imag <: BosonicBathCorrelationFunction
     Ω_c::Real
 end
 
+struct BosonicBCF_dt <: BosonicBathCorrelationFunction 
+    specdens::SpectralDensity
+    Temp::Real
+    Ω_c::Real
+end
+
 # Bosonic BCF
 function (b::BosonicBCF)(t::Real) :: ComplexF64
     # Real part of the BCF
@@ -65,6 +71,25 @@ function (b::BosonicBCF_Imag)(t::Real) :: Float64
     return A
 end
 
+# Bosonic BCF
+function (b::BosonicBCF_dt)(t::Real) :: ComplexF64
+    # Real part of the BCF
+    integrand_re = (ω::Float64) -> begin
+        if b.Temp == 0.0
+            - ω * b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
+        else
+            β = ħ * 1e15 / (kb * b.Temp)
+            - ω * (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * sin(ω * t) / π
+        end
+    end
+    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+
+    # Imaginary part of the BCF
+    integrand_im(ω) = - ω * b.specdens(ω; scale=icm2ifs) * cos(ω * t) / π
+    A, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+
+    return S + 1.0im * A
+end
 
 # Fermionic BCF
 abstract type FermionicBathCorrelationFunction <: BathCorrelationFunction end
@@ -89,7 +114,6 @@ function (b::FermionicBCF_Minus)(t::Real) :: ComplexF64
     μ = b.ChemPot
     integrand_re = (ε::Float64) -> begin
         if b.Temp == 0.0
-            
             b.specdens(ω; scale=icm2ifs) * () * cos(ε * t) / 2π
         else
             β = ħ * 1e15 / (kb * b.Temp)

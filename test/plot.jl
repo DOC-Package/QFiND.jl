@@ -186,3 +186,8 @@ function plot_bcf(
 
     return fig
 end
+
+function plot_basis(A::AbstractMatrix{ComplexF64}, x::AbstractVector{<:Real})
+
+    return
+end

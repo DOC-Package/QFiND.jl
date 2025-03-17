@@ -2,17 +2,17 @@ module QFiND
 
 export icm2ifs
 export sumexp, equispaced_grid, evaluate_error
-export DiscretizationMethod, DiscrID, DiscrBSDO
-export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialData
+export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
+export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD
 export QuantumNoiseSpectralDensity, BosonicQNSD, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
-export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag
+export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt
 export FermionicBCF_Plus, FermionicBCF_Minus
-export bsdo_discr, id_discr, id_discr_c, svd_basis_decomp
+export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
 
-import RationalFunctionApproximation: Barycentric
+import RationalFunctionApproximation: Barycentric, evaluate
 
 include("constants.jl")
 include("abstract.jl")
