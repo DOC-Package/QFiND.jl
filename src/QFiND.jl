@@ -13,6 +13,7 @@ export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
 
 import RationalFunctionApproximation: Barycentric, evaluate
+import ExpFit
 
 include("constants.jl")
 include("abstract.jl")

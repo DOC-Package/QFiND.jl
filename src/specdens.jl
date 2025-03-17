@@ -1,4 +1,3 @@
-
 # Define Abstract Type for Spectral Density Models
 abstract type SpectralDensity <: Function end
 
@@ -66,6 +65,25 @@ function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return sgn * res
 end
 
+function sd_poles(sd::TannorMeyerSD)
+    poles = ComplexF64[]
+    for (Ω, Γ, _) in zip(sd.Ω, sd.Γ, sd.λ)
+        push!(poles, Ω + im*(Γ/2))
+        push!(poles, Ω - im*(Γ/2))
+    end
+    return poles
+end
+
+function sd_residues(sd::TannorMeyerSD)
+    res = ComplexF64[]
+    for (Ω, Γ, λ) in zip(sd.Ω, sd.Γ, sd.λ)
+        res1 = λ * (Γ/2)^2 / (im*Γ)
+        res2 = -λ * (Γ/2)^2 / (im*Γ)
+        push!(res, res1)
+        push!(res, res2)
+    end
+    return res
+end
 
 """
     (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) -> Float64
@@ -85,6 +103,28 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
         res += p * ω / deno
     end
     return sgn * res
+end
+
+function sd_nodes(sd::BrownianSD)
+    poles = ComplexF64[]
+    for (Ω, Γ, _) in zip(sd.Ω, sd.Γ, sd.λ)
+        delta = sqrt(Ω^2 - (Γ/2)^2)
+        push!(poles, delta - im*(Γ/2))
+        push!(poles, -delta - im*(Γ/2))
+    end
+    return poles
+end
+
+function sd_residues(sd::BrownianSD)
+    res = ComplexF64[]
+    for (Ω, Γ, λ) in zip(sd.Ω, sd.Γ, sd.λ)
+        delta = sqrt(Ω^2 - (Γ/2)^2)
+        res1 = - (λ * Ω^2) / (4im*delta)
+        res2 =   (λ * Ω^2) / (4im*delta)
+        push!(res, res1)
+        push!(res, res2)
+    end
+    return res
 end
 
 """

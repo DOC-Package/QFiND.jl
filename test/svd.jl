@@ -9,13 +9,13 @@ using QFiND
     gamc = 50.0
     Temp = 300.0
     Ω_c = 1000.0
-    Ω_min = -400.0
-    Ω_max = 400.0
-    N_w = 10000
-    T_c = 500.0
+    Ω_min = -500.0
+    Ω_max = 500.0
+    N_w = 5000
+    T_c = 1000.0
     N_t = 200
-    eps = 5e-3
-    rank = 27
+    eps = 5e-2
+    rank = 0
 
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
@@ -26,13 +26,17 @@ using QFiND
     res = svd_intermed_decomp(dataset, eps)
     @test !isnothing(res)
     U = res.basis_time
+    V = res.basis_freq
     zk = res.coef
-    D = res.Dt
-    Ut = U * D / icm2ifs
+    Dt = res.Dt
+    Ut = U * Dt / icm2ifs
     evaluate_error(U, zk, dataset.bcf)
     plot_bcf(U, zk, dataset.bcf, dataset.time)
 
     evaluate_error(Ut, zk, dataset.dC)
-    plot_bcf(Ut, zk, dataset.dC, dataset.time)
+    #plot_bcf(Ut, zk, dataset.dC, dataset.time)
+
+    plot_basis_time(U, dataset.time)
+    plot_basis_freq(V, dataset.freq ./ icm2ifs)
 
 end

@@ -13,6 +13,17 @@ end
 function derivative_matrix(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
     N = length(ω)
     dω = abs(ω[2] - ω[1])
+    W = Diagonal(ones(ComplexF64, N)) .* dω
+    Ω = Diagonal(ω)
+    Σ = Diagonal(sv)
+    invΣ = Diagonal(1 ./ sv)
+    A = V' * (Ω * W) * V
+    return Σ * A * invΣ .* (-1im)
+end
+
+function derivative_matrix2(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
+    N = length(ω)
+    dω = abs(ω[2] - ω[1])
     W = dω .* Diagonal(ones(ComplexF64, N))
     Ω = Diagonal(ω)
     Σ = Diagonal(sv)
@@ -33,11 +44,10 @@ function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<
     V = V[:, 1:frank]
     # fit V using AAA algorithm
     fitV = []
-    for i in 1:frank
-        res = aaa(V[:, i], 1e-12)
-        fitV[i] = res
-    end
-    # fitV = 
+    #for i in 1:frank
+    #    res = aaa(ω, V[:, i]; tol=1e-10)
+    #    fitV[i] = res
+    #end
     Dt = derivative_matrix(sv, V, ω)
     
     return svd_intermed_decomp_sub(cc, U, V, Dt, rand)

@@ -187,7 +187,128 @@ function plot_bcf(
     return fig
 end
 
-function plot_basis(A::AbstractMatrix{ComplexF64}, x::AbstractVector{<:Real})
+function plot_basis_time(U::AbstractMatrix{ComplexF64}, t::AbstractVector{<:Real})
+    # Style parameters (matching Python style)
+    ls1    = 20      # label font size
+    ls2    = 15      # tick label font size
+    lw1    = 2.5     # line width for main lines
+    lw2    = 2.5     # line width for reference lines
 
-    return
+    # Figure: 2 rows × 2 columns (1列目にプロット、2列目に凡例配置)
+    fig = Figure(size = (900, 700))
+
+    # Top axis: Bath correlation function (BCF) plot (実部)
+    ax1 = Axis(fig[1, 1],
+    xlabel = L"t (\mathrm{fs})",
+    ylabel = L"\mathrm{Re}\;U(t)",
+    xlabelsize = ls2,
+    ylabelsize = ls2
+    )
+
+    # Bottom axis: Error plot (虚部)
+    ax2 = Axis(fig[2, 1],
+    xlabel = L"ω (\mathrm{cm^{-1}})",
+    ylabel = L"\mathrm{Im}\;U(t)",
+    xlabelsize = ls2,
+    ylabelsize = ls2
+    )
+
+    # 線の数に合わせてグラデーションの色を生成
+    num_lines = size(U, 2)
+    colors_top    = [cgrad(:OrRd)[i] for i in LinRange(0, 1, num_lines)]
+    colors_bottom = [cgrad(:Blues)[i] for i in LinRange(0, 1, num_lines)]
+
+    # Top axisに実部の線をプロット（各線ごとにグラデーションの色を使用）
+    for i in 1:num_lines
+    lines!(ax1, t, real.(U[:, i]),
+    label = string(i),
+    color = colors_top[i],
+    linewidth = lw1
+    )
+    end
+
+    # Bottom axisに虚部の線をプロット（各線ごとにグラデーションの色を使用）
+    for i in 1:num_lines
+    lines!(ax2, t, imag.(U[:, i]),
+    label = string(i),
+    color = colors_bottom[i],
+    linewidth = lw1
+    )
+    end
+
+    # ax1 の凡例を作成し、Figure の右側（第2列）に配置（両行に跨る）
+    leg1 = Legend(fig, ax1, labelsize = ls2)
+    leg2 = Legend(fig, ax2, labelsize = ls2)
+    # legendを右側に配置
+    fig[1, 2] = leg1
+    fig[2, 2] = leg2
+    
+
+    # 画像として保存
+    save("basis_time.png", fig)
+
+    return fig
+end
+
+function plot_basis_freq(V::AbstractMatrix{ComplexF64}, ω::AbstractVector{<:Real})
+    # Style parameters (matching Python style)
+    ls1    = 20      # label font size
+    ls2    = 15      # tick label font size
+    lw1    = 2.5     # line width for main lines
+    lw2    = 2.5     # line width for reference lines
+
+    # Figure: 2 rows × 2 columns (1列目にプロット、2列目に凡例配置)
+    fig = Figure(size = (900, 700))
+
+    # Top axis: Bath correlation function (BCF) plot (実部)
+    ax1 = Axis(fig[1, 1],
+    xlabel = L"ω (\mathrm{cm}^{-1})",
+    ylabel = L"\mathrm{Re}\;V(ω)",
+    xlabelsize = ls2,
+    ylabelsize = ls2
+    )
+
+    # Bottom axis: Error plot (虚部)
+    ax2 = Axis(fig[2, 1],
+    xlabel = L"ω (\mathrm{cm^{-1}})",
+    ylabel = L"\mathrm{Im}\;V(ω)",
+    xlabelsize = ls2,
+    ylabelsize = ls2
+    )
+
+    # 線の数に合わせてグラデーションの色を生成
+    num_lines = size(V, 2)
+    colors_top    = [cgrad(:OrRd)[i] for i in LinRange(0, 1, num_lines)]
+    colors_bottom = [cgrad(:Blues)[i] for i in LinRange(0, 1, num_lines)]
+
+    # Top axisに実部の線をプロット（各線ごとにグラデーションの色を使用）
+    for i in 1:num_lines
+    lines!(ax1, ω, real.(V[:, i]),
+    label = string(i),
+    color = colors_top[i],
+    linewidth = lw1
+    )
+    end
+
+    # Bottom axisに虚部の線をプロット（各線ごとにグラデーションの色を使用）
+    for i in 1:num_lines
+    lines!(ax2, ω, imag.(V[:, i]),
+    label = string(i),
+    color = colors_bottom[i],
+    linewidth = lw1
+    )
+    end
+
+    # ax1 の凡例を作成し、Figure の右側（第2列）に配置（両行に跨る）
+    leg1 = Legend(fig, ax1, labelsize = ls2)
+    leg2 = Legend(fig, ax2, labelsize = ls2)
+    # legendを右側に配置
+    fig[1, 2] = leg1
+    fig[2, 2] = leg2
+    
+
+    # 画像として保存
+    save("basis_freq.png", fig)
+
+    return fig
 end

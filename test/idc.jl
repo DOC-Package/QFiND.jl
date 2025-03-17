@@ -12,9 +12,9 @@ using QFiND
     Ω_min = -400.0
     Ω_max = 400.0
     N_w = 2000
-    T_c = 500.0
+    T_c = 1000.0
     N_t = 200
-    eps = 5e-3
+    eps = 2e-2
     rank = 27
 
     sdens = PowerLawExpSD(s, alpha, gamc)
