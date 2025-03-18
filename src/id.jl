@@ -16,9 +16,9 @@ function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B
     c[1:N_t] .= real.(cc)
     c[N_t+1:2*N_t] .= imag.(cc)
     # Solve the NNLS problem: minimize ||B*g - c|| subject to g ≥ 0.
-    g = nonneg_lsq(B, c; alg=:nnls) |> vec
-    err = norm(B * g - c)
-    return g, err
+    z = nonneg_lsq(B, c; alg=:nnls) |> vec
+    err = norm(B * z - c)
+    return z, err
 end
 
 function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Real})

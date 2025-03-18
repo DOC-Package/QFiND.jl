@@ -1,40 +1,30 @@
-function svd_intermed_decomp_sub(cc::AbstractVector{<:Complex{<:Real}}, 
-    U::AbstractMatrix{<:Number}, V::Matrix{ComplexF64}, Dt::AbstractMatrix{<:Number}, rand::Bool=false)
-    # Estimate weights via NNLS
+function calc_coeff(cc::AbstractVector{<:Complex{<:Real}}, U::AbstractMatrix{<:Number})
     frank = size(U, 2)
-    idx, B, err = id_time(U, frank, rand)
-    zk, err = linsys_weight(cc, idx, B)
-    
-    println("Number of basis functions: ", frank)
-    println("Error in LS2: ", err)
-    return (nsp=frank, basis_time=U, basis_freq=V, coef=zk, Dt=Dt)
+    idx, B, err = id_time(U, frank, false)
+    z, err = linsys_weight(cc, idx, B)
+    return z
+end
+
+function calc_coeff(ω::AbstractVector{<:Real}, sv::Vector{Float64}, V::Matrix{ComplexF64})
+    dω = abs(ω[2] - ω[1])
+    W = ones(ComplexF64, length(ω)) .* dω
+    z = V' * W
+    z = z .* sv
+    return z
 end
 
 function derivative_matrix(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
     N = length(ω)
     dω = abs(ω[2] - ω[1])
-    W = Diagonal(ones(ComplexF64, N)) .* dω
     Ω = Diagonal(ω)
     Σ = Diagonal(sv)
     invΣ = Diagonal(1 ./ sv)
-    A = V' * (Ω * W) * V
+    A = V' * (Ω * V)
     return Σ * A * invΣ .* (-1im)
-end
-
-function derivative_matrix2(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
-    N = length(ω)
-    dω = abs(ω[2] - ω[1])
-    W = dω .* Diagonal(ones(ComplexF64, N))
-    Ω = Diagonal(ω)
-    Σ = Diagonal(sv)
-    invΣ = Diagonal(1 ./ sv)
-    A = V' * Ω * W * V
-    return -im * Σ * A * invΣ
 end
 
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
-    # Create the core matrix f
     fmat = create_integrand_c(sbeta, t, ω)
     # Perform the SVD
     U, sv, V = svd(fmat)
@@ -42,28 +32,22 @@ function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<
     sv = sv[1:frank]
     U = U[:, 1:frank]
     V = V[:, 1:frank]
-    # fit V using AAA algorithm
-    fitV = []
-    #for i in 1:frank
-    #    res = aaa(ω, V[:, i]; tol=1e-10)
-    #    fitV[i] = res
-    #end
+    z = calc_coeff(cc, U)
     Dt = derivative_matrix(sv, V, ω)
-    
-    return svd_intermed_decomp_sub(cc, U, V, Dt, rand)
+    println("Number of basis functions: ", frank)
+    return (nsp=frank, basis_time=U, basis_freq=V, coef=z, Dt=Dt)
 end
 
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
-    # Create the core matrix f
     fmat = create_integrand_c(sbeta, t, ω)
     # Perform the SVD
     U, sv, V = svd(fmat)
     U = U[:, 1:frank]
     V = V[:, 1:frank]
+    z = calc_coeff(cc, U)
     Dt = derivative_matrix(sv, V, ω)
-    
-    return svd_intermed_decomp_sub(cc, U, V, Dt, rand)
+    return (nsp=frank, basis_time=U, basis_freq=V, coef=z, Dt=Dt)
 end
 
 function svd_intermed_decomp(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 

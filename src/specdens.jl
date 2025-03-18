@@ -30,6 +30,7 @@ struct WideBandSD <: SpectralDensity
     Γ :: Float64
 end
 
+
 """
     (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
@@ -97,13 +98,15 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     Γ = specdens.Γ .* scale
     λ = specdens.λ .* scale
     res = 0.0
-    for i in eachindex(specdens.Ω)
-        p    = 2.0 * specdens.Γ[i] * specdens.λ[i] * specdens.Ω[i]^2
-        deno = (ω^2 - specdens.Ω[i]^2)^2 + (specdens.Γ[i]^2 * ω^2)
+    for i in eachindex(Ω)
+        p    = 2.0 * Γ[i] * λ[i] * Ω[i]^2
+        deno = (ω^2 - Ω[i]^2)^2 + (Γ[i]^2 * ω^2)
         res += p * ω / deno
     end
     return sgn * res
 end
+
+BrownianSD(Ω::Real, Γ::Real, λ::Real) = BrownianSD([Float64(Ω)], [Float64(Γ)], [Float64(λ)])
 
 function sd_nodes(sd::BrownianSD)
     poles = ComplexF64[]

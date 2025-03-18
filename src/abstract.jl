@@ -25,11 +25,11 @@ end
 struct InitialDataSetSVD <: InitialDataSet
     time :: Vector{Float64}
     freq :: Vector{Float64}
+    weights :: Vector{Float64}
     qnsd :: Vector{Float64}
     bcf :: Vector{ComplexF64}
     dC :: Vector{ComplexF64}
 end
-
 
 function InitialData(
     method::DiscrBSDO, 
@@ -91,15 +91,18 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=200) :: InitialDataSetSVD
+    n_time::Int=200,) :: InitialDataSetSVD
+    #grid::string="eq") :: InitialDataSetSVD
+
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
+    w = ones(length(ω))
     S = sbeta.(ω; scale=icm2ifs)
     S = max.(S, 0.0)
     t = collect(range(0, T_c, length=n_time))
     bcf = bcf.(t)
     dC = dC.(t)
-    return InitialDataSetSVD(t, ω, S, bcf, dC)
+    return InitialDataSetSVD(t, ω, w, S, bcf, dC)
 end
 

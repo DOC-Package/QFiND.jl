@@ -14,8 +14,8 @@ using QFiND
     N_w = 2000
     T_c = 1000.0
     N_t = 200
-    eps = 2e-2
-    rank = 27
+    eps = 1e-2
+    rank = 14
 
     sdens = PowerLawExpSD(s, alpha, gamc)
     sbeta = BosonicQNSD(sdens, Temp)
@@ -39,6 +39,9 @@ using QFiND
     freq = res.freq
     coef = res.coef
     evaluate_error(freq, coef, bcf, T_c, N_t)
-    plot_bcf(freq, coef, bcf, T_c, N_t)
+    plot_bcf(freq, coef, bcf, T_c, N_t, "bcf_idc.png")
+
+    # write out the frequencies and coefficients using a general Julia function into a file
+    
 
 end

@@ -50,7 +50,7 @@ function evaluate_error(
     error = approx - reference
     
     # Compute the normalized errors.
-    norm_val = abs(reference[1])
+    norm_val = maximum(abs.(reference))
     normalized_max_error = maximum(abs.(error)) / norm_val
     normalized_avg_error = sum(abs.(error)) / (norm_val * size(reference,1))
     

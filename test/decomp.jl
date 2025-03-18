@@ -2,7 +2,7 @@ include("plot.jl")
 using Test
 using QFiND
 
-@testset "svd.jl" begin
+@testset "decomp.jl" begin
     
     s = 1.0
     alpha = 1.0
