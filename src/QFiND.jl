@@ -12,6 +12,7 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
+export esprit_decomp
 
 import RationalFunctionApproximation: Barycentric, evaluate
 import ExpFit
@@ -26,6 +27,7 @@ include("id_sub.jl")
 include("id.jl")
 include("idc.jl")
 include("svd.jl")
+include("decomp.jl")
 include("evaluate.jl")
 
 using LinearAlgebra

@@ -152,10 +152,12 @@ struct BosonicQNSD <: QuantumNoiseSpectralDensity
     Temp :: Float64          
 end
 
-"""
-    
 
-"""
+function f_BE(ω::Float64, Temp::Float64)
+    β = ħ * 1e15 / (kb * Temp)
+    return 1.0 / (exp(β * icm2ifs * ω) - 1.0)
+end
+
 
 function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
     β = ħ * 1e15 / (kb * b.Temp)

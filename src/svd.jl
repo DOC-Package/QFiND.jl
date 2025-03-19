@@ -13,9 +13,7 @@ function calc_coeff(ω::AbstractVector{<:Real}, sv::Vector{Float64}, V::Matrix{C
     return z
 end
 
-function derivative_matrix(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
-    N = length(ω)
-    dω = abs(ω[2] - ω[1])
+function calc_derivative_matrix(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vector{Float64})
     Ω = Diagonal(ω)
     Σ = Diagonal(sv)
     invΣ = Diagonal(1 ./ sv)
@@ -24,7 +22,7 @@ function derivative_matrix(sv::Vector{Float64}, V::Matrix{ComplexF64}, ω::Vecto
 end
 
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real)
     fmat = create_integrand_c(sbeta, t, ω)
     # Perform the SVD
     U, sv, V = svd(fmat)
@@ -33,13 +31,13 @@ function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<
     U = U[:, 1:frank]
     V = V[:, 1:frank]
     z = calc_coeff(cc, U)
-    Dt = derivative_matrix(sv, V, ω)
+    Dt = calc_derivative_matrix(sv, V, ω)
     println("Number of basis functions: ", frank)
     return (nsp=frank, basis_time=U, basis_freq=V, coef=z, Dt=Dt)
 end
 
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
+    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int)
     fmat = create_integrand_c(sbeta, t, ω)
     # Perform the SVD
     U, sv, V = svd(fmat)
@@ -51,25 +49,25 @@ function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<
 end
 
 function svd_intermed_decomp(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, eps::Real; rand::Bool=false)
+    tc::Real, Ω_min::Real, Ω_max::Real, eps::Real)
     t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return svd_intermed_decomp(sbeta, cc, t, ω, eps; rand=rand)
+    return svd_intermed_decomp(sbeta, cc, t, ω, eps)
 end
 
 function svd_intermed_decomp(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, frank::Int; rand::Bool=false)
+    tc::Real, Ω_min::Real, Ω_max::Real, frank::Int)
     t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return svd_intermed_decomp(sbeta, cc, t, ω, frank; rand=rand)
+    return svd_intermed_decomp(sbeta, cc, t, ω, frank)
 end
 
-function svd_intermed_decomp(dataset::InitialDataSetSVD, eps::Real; rand::Bool=false)
-    return svd_intermed_decomp(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, eps; rand=rand)
+function svd_intermed_decomp(dataset::InitialDataSetSVD, eps::Real)
+    return svd_intermed_decomp(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, eps)
 end
 
-function svd_intermed_decomp(dataset::InitialDataSetSVD, frank::Int; rand::Bool=false)
-    return svd_intermed_decomp(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, frank; rand=rand)
+function svd_intermed_decomp(dataset::InitialDataSetSVD, frank::Int)
+    return svd_intermed_decomp(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, frank)
 end

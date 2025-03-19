@@ -14,7 +14,7 @@ using QFiND
     N_w = 10000
     T_c = 1000.0
     N_t = 200
-    eps = 5e-2
+    eps = 1e-4
     rank = 0
 
     sdens = PowerLawExpSD(s, alpha, gamc)
