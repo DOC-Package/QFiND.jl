@@ -3,8 +3,8 @@ include("../save.jl")
 using QFiND
 
 Ω = 100.0
-Γ = 100.0
-λ = 50.0
+Γ = 50.0
+λ = 100.0
 Temp = 300.0
 Ω_c = 6000.0
 T_c = 100.0
@@ -20,5 +20,5 @@ c = res.coeff
 println("degree of the exponential: ", size(a,1))
 evaluate_error(a, c, bcf, T_c, N_t)
 plot_bcf(a, c, bcf, T_c, N_t, "esprit.png")
-save_array_union("bo_esprit_l50.txt", c, a)
+save_array_union("bo_esprit_l100.txt", c, a)
 
