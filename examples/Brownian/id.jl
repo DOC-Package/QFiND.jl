@@ -8,12 +8,12 @@ using QFiND
 λ = 50.0
 Temp = 300.0
 Ω_c = 6000.0
-Ω_min = -500.0
-Ω_max = 500.0
+Ω_min = -600.0
+Ω_max = 600.0
 N_w = 2000
-T_c = 100.0
+T_c = 150.0
 N_t = 100
-eps = 1e-4
+eps = 1e-8
 
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)

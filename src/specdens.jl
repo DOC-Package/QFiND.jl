@@ -22,6 +22,11 @@ struct BrownianSD <: SpectralDensity
     λ :: Vector{Float64}  # vector of coupling strengths
 end
 
+struct DrudeSD <: SpectralDensity
+    γ :: Float64
+    η :: Float64
+end
+
 struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
 end
