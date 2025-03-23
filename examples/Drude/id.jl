@@ -3,21 +3,22 @@ include("../save.jl")
 using QFiND
 
     
-Ω = 100.0
-Γ = 100.0
+γ = 50.0
 λ = 100.0
 Temp = 300.0
 Ω_c = 6000.0
-Ω_min = -500.0
-Ω_max = 500.0
+Ω_min = -1000.0
+Ω_max = 1000.0
 N_w = 2000
-T_c = 100.0
-N_t = 1000
-eps = 5e-3
+T_c = 150.0
+N_t = 100
+eps = 1e-8
 
-sdens = BrownianSD(Ω, Γ, λ)
-sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp, Ω_c)
+sdens = BrownianSD(γ, λ)
+sbeta = BosonicQNSD_HighT(sdens, Temp)
+dht = Drude_HighT(sdens, Temp; scale=icm2ifs)
+bcf = t -> dht.coeff * exp(-dht.expon * t)
+
 dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
 res = id_discr(dataset, eps)
 

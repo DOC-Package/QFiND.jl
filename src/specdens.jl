@@ -24,7 +24,7 @@ end
 
 struct DrudeSD <: SpectralDensity
     γ :: Float64
-    η :: Float64
+    λ :: Float64
 end
 
 struct AAAfittedSD <: SpectralDensity
@@ -147,12 +147,31 @@ function (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return sgn * scale * res
 end
 
+"""
+    (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the spectral density for the Drude model.
+"""
+function (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ω = abs(ω)
+    γ = specdens.γ .* scale
+    λ = specdens.λ .* scale
+    res = 2.0 * λ * γ * ω / (ω^2 + γ^2)
+    return sgn * res
+end
+
 
 # Define Abstract Type for the QNSD
 abstract type QuantumNoiseSpectralDensity <: Function end
 
 # Bosonic QNSD
 struct BosonicQNSD <: QuantumNoiseSpectralDensity
+    specdens :: SpectralDensity  
+    Temp :: Float64          
+end
+
+struct BosonicQNSD_HighT <: QuantumNoiseSpectralDensity
     specdens :: SpectralDensity  
     Temp :: Float64          
 end
@@ -170,6 +189,16 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
         return (b.specdens)(ω; scale=scale) / π
     else
         factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / (2π)
+        return (b.specdens)(ω; scale=scale) * factor
+    end
+end
+
+function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64
+    β = ħ * 1e15 / (kb * b.Temp)
+    if b.Temp == 0.0
+        return (b.specdens)(ω; scale=scale) / π
+    else
+        factor = 2.0 * scale / (β * icm2ifs * ω) / (2π)
         return (b.specdens)(ω; scale=scale) * factor
     end
 end

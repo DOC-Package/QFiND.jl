@@ -4,15 +4,15 @@ export icm2ifs
 export sumexp, equispaced_grid, gausslegendre_discr, evaluate_error
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
-export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD
+export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD
 export sd_nodes, sd_weights
-export QuantumNoiseSpectralDensity, BosonicQNSD, FermionicQNSD
+export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_HighT, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
-export esprit_decomp
+export esprit_decomp, DrudeHighT, BrownianHighT
 
 import RationalFunctionApproximation: Barycentric, evaluate
 import ExpFit
