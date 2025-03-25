@@ -188,7 +188,7 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
     if b.Temp == 0.0
         return (b.specdens)(ω; scale=scale) / π
     else
-        factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / (2π)
+        factor = (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / (2π)
         return (b.specdens)(ω; scale=scale) * factor
     end
 end
@@ -198,7 +198,7 @@ function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64
     if b.Temp == 0.0
         return (b.specdens)(ω; scale=scale) / π
     else
-        factor = 2.0 * scale / (β * icm2ifs * ω) / (2π)
+        factor = 2.0 / (β * ω * icm2ifs / scale) / (2π)
         return (b.specdens)(ω; scale=scale) * factor
     end
 end

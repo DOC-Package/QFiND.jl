@@ -10,8 +10,8 @@ Temp = 300.0
 Ω_min = -600.0
 Ω_max = 600.0
 N_w = 2000
-T_c = 150.0
-N_t = 100
+T_c = 200.0
+N_t = 400
 eps = 1e-3
 
 sdens = BrownianSD(Ω, Γ, λ)

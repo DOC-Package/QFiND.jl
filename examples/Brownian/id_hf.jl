@@ -2,17 +2,17 @@ include("../plot.jl")
 include("../save.jl")
 using QFiND
 
-Ω = 1400.0
-Γ = 200.0
-λ = 600.0
+Ω = 300.0
+Γ = 100.0
+λ = 100.0
 Temp = 300.0
 Ω_c = 6000.0
-Ω_min = -3000.0
-Ω_max = 3000.0
+Ω_min = -1000.0
+Ω_max = 1000.0
 N_w = 4000
 T_c = 200.0
 N_t = 500
-eps = 1e-3
+eps = 5e-3
 
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)

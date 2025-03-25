@@ -2,12 +2,12 @@ include("../plot.jl")
 include("../save.jl")
 using QFiND
 
-Ω = 100.0
+Ω = 300.0
 Γ = 100.0
-λ = 50.0
+λ = 100.0
 Temp = 300.0
 Ω_c = 6000.0
-T_c = 100.0
+T_c = 200.0
 N_t = 1000
 eps = 5e-3
 
