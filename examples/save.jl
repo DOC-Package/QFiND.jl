@@ -1,6 +1,6 @@
 using Printf
 
-function save_array(filename::String, array1::Vector{Float64}, array2::Vector{Float64}) 
+function save_array(filename::String, array1::Vector{Float64}) 
     open(filename, "w") do io
         write(io, " "^4 * "Frequencies" * " "^10 * "Coefficients\n")
         write(io, "-"^40 * "\n")  
@@ -8,6 +8,18 @@ function save_array(filename::String, array1::Vector{Float64}, array2::Vector{Fl
         for (a1, a2) in zip(array1, array2)
             write(io, @sprintf("%0.12e    %0.12e\n", 
                                a1, a2))
+        end
+    end
+end
+
+function save_array(filename::String, array1::Vector{Float64}, array2::Vector{Float64}, array3::Vector{Float64}) 
+    open(filename, "w") do io
+        write(io, " "^4 * "Frequencies" * " "^7 * "Coefficients (phys)" * " "^4 * "Coefficients (tilde)\n")
+        write(io, "-"^60 * "\n")  
+        
+        for (a1, a2, a3) in zip(array1, array2, array3)
+            write(io, @sprintf("%0.12e    %0.12e    %0.12e\n", 
+                               a1, a2, a3))
         end
     end
 end
@@ -27,7 +39,7 @@ function save_array(filename::String, array1::Vector{Complex{T}}, array2::Vector
     end
 end
 
-function save_array_unite(filename::String, array1::Vector{Complex{T}}, array2::Vector{Complex{T}}) where T
+function save_array_union(filename::String, array1::Vector{Complex{T}}, array2::Vector{Complex{T}}) where T
     open(filename, "w") do io
         write(io, " "^15 * "Coefficients" * " "^25 * "Exponents\n")
         write(io, " "^10 * "Real" * " "^10 * "Imag" * " "^20 * "Real" * " "^10 * "Imag\n")

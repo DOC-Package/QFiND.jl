@@ -4,10 +4,10 @@ using QFiND
 
 Ω = 300.0
 Γ = 100.0
-λ = 100.0
+λ = 50.0
 Temp = 300.0
 Ω_c = 6000.0
-T_c = 200.0
+T_c = 100.0
 N_t = 1000
 eps = 5e-3
 
@@ -20,5 +20,5 @@ c = res.coeff
 println("degree of the exponential: ", size(a,1))
 evaluate_error(a, c, bcf, T_c, N_t)
 plot_bcf(a, c, bcf, T_c, N_t, "esprit.png")
-save_array_union("bo_esprit_l50.txt", c, a)
+save_array_union("bo_esprit_300_2.txt", c, a)
 

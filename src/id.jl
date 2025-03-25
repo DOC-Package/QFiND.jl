@@ -21,10 +21,11 @@ function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B
     return z, err
 end
 
-function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Real})
+function sort_and_rescale(wk::AbstractVector{<:Real}, zk::AbstractVector{<:Real}, gk::AbstractVector{<:Real})
     # Sort frequencies and corresponding coefficients in ascending order
     perm = sortperm(wk)
     wk = wk[perm]
+    zk = zk[perm]
     gk = gk[perm]
     
     Nsp = length(wk)
@@ -32,15 +33,17 @@ function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Real}
     if minimum(gk) == 0.0
         keep = findall(x -> x > 0.0, gk)
         wk = wk[keep]
+        zk = zk[keep]
         gk = gk[keep]
         Nsp = length(wk)
     end
 
     # Rescale the frequencies and coefficients
     wk = wk ./ icm2ifs
+    zk = zk ./ icm2ifs
     gk = gk ./ icm2ifs^2.0
     
-    return Nsp, wk, gk
+    return Nsp, wk, zk, gk
 end
 
 function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}},
@@ -52,12 +55,12 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     # Estimate weights via NNLS
     zk, err2 = nnls_weight(cc, t, B)
     gk = zk .* sbeta[idx[1:frank]]
-    Nsp, wk, gk = sort_and_rescale(wk, gk)
+    Nsp, wk, zk, gk = sort_and_rescale(wk, zk, gk)
     
     println("Error in NNLS: ", err2)
     println("Number of sample points: ", Nsp)
     
-    return (nsp=Nsp, freq=wk, coef=gk, frank=frank)
+    return (nsp=Nsp, freq=wk, coeff=gk, weight=zk, frank=frank)
 end
 
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 

@@ -21,9 +21,13 @@ dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_
 res = id_discr(dataset, eps)
 
 freq = res.freq
-coef = res.coef
-evaluate_error(freq, coef, bcf, T_c, N_t)
-plot_bcf(freq, coef, bcf, T_c, N_t, "id_hf.png")
+coeff = res.coeff
+weight = res.weight
 
-save_array("omega_g_bo_hf.txt", freq, sqrt.(coef))
+evaluate_error(freq, coeff, bcf, T_c, N_t)
+plot_bcf(freq, coeff, bcf, T_c, N_t, "id_hf.png")
+
+coeff_tilde = weight .* sbeta.(-freq)
+
+save_array("omega_g_bo300_mixed.txt", freq, sqrt.(coeff), sqrt.(coeff_tilde))
 
