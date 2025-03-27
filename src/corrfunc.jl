@@ -9,6 +9,7 @@ struct BosonicBCF <: BosonicBathCorrelationFunction
     Temp::Real
     Ω_c::Real
 end
+BosonicBCF(specdens::SpectralDensity, Temp::Real) = BosonicBCF(specdens, Temp, Inf)
 
 # Bosonic BCF with real part only
 struct BosonicBCF_Real <: BosonicBathCorrelationFunction 
@@ -16,6 +17,7 @@ struct BosonicBCF_Real <: BosonicBathCorrelationFunction
     Temp::Real
     Ω_c::Real
 end
+BosonicBCF_Real(specdens::SpectralDensity, Temp::Real) = BosonicBCF_Real(specdens, Temp, Inf)
 
 # Bosonic BCF with imaginary part only
 struct BosonicBCF_Imag <: BosonicBathCorrelationFunction 
@@ -23,12 +25,15 @@ struct BosonicBCF_Imag <: BosonicBathCorrelationFunction
     Temp::Real
     Ω_c::Real
 end
+BosonicBCF_Imag(specdens::SpectralDensity, Temp::Real) = BosonicBCF_Imag(specdens, Temp, Inf)
 
 struct BosonicBCF_dt <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
     Ω_c::Real
 end
+BosonicBCF_dt(specdens::SpectralDensity, Temp::Real) = BosonicBCF_dt(specdens, Temp, Inf)
+
 
 # Bosonic BCF
 function (b::BosonicBCF)(t::Real) :: ComplexF64
@@ -67,13 +72,14 @@ end
 # Imaginary part of a BCF for a time t.
 function (b::BosonicBCF_Imag)(t::Real) :: Float64
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
-    A, err = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    A, err = quadgk(ω -> integrand_im(ω), 0.0, v.Ω_c * icm2ifs; atol=1e-12)
     return A
 end
 
-function reorganization_energy(sd::SpectralDensity)
+function reorganization_energy(sd::SpectralDensity; Ω_c::Real=Inf) :: Float64
     integrand(ω) = sd(ω) / ω / π
-    return quadgk(ω -> integrand(ω), 0.0, Inf; atol=1e-12)[1]
+    E_r, err = quadgk(ω -> integrand(ω), 0.0, Ω_c * icm2ifs; atol=1e-12)
+    return E_r
 end
 
 # Bosonic BCF

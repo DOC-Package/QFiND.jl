@@ -1,6 +1,6 @@
 using Printf
 
-function save_array(filename::String, array1::Vector{Float64}) 
+function save_array(filename::String, array1::Vector{Float64}, array2::Vector{Float64}) 
     open(filename, "w") do io
         write(io, " "^4 * "Frequencies" * " "^10 * "Coefficients\n")
         write(io, "-"^40 * "\n")  

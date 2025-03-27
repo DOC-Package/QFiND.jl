@@ -2,9 +2,7 @@ using QFiND
 using CairoMakie
 using LaTeXStrings 
 
-function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int)
-    w = range(Ω_min, Ω_max, length=N_freq) |> collect
-    j = sbeta.(w)
+function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:Real}, filename::String)
     # Plot the spectral density and save the plot
     fig = Figure()
     ax = Axis(fig[1, 1],
@@ -16,10 +14,16 @@ function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int)
     ygridvisible = false,
     )
     lines!(ax, w, j, color = :red, linewidth = 2)
-    xlims!(ax, (Ω_min, Ω_max))
+    xlims!(ax, (w[1], w[end]))
     ylims!(ax, (0, nothing))
     #
-    save("qnsd.png", fig)
+    save(filename, fig)
+end
+
+function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int, filename::String)
+    w = range(Ω_min, Ω_max, length=N_freq) |> collect
+    j = sbeta.(w)
+    return plot_qnsd(w, j, filename)
 end
 
 function plot_bcf_sub(

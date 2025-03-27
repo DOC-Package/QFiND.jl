@@ -17,14 +17,14 @@ struct InitialDataSetBSDO <: InitialDataSet
     qnsd :: Function
 end
 struct InitialDataSetID <: InitialDataSet
-    time :: Vector{Float64}
     freq :: Vector{Float64}
+    time :: Vector{Float64}
     qnsd :: Vector{Float64}
     bcf :: Vector{ComplexF64}
 end
 struct InitialDataSetSVD <: InitialDataSet
-    time :: Vector{Float64}
     freq :: Vector{Float64}
+    time :: Vector{Float64}
     weights :: Vector{Float64}
     qnsd :: Vector{Float64}
     bcf :: Vector{ComplexF64}
@@ -60,7 +60,7 @@ function InitialData(
     S = max.(S, 0.0)
     t = collect(range(0, T_c, length=n_time))
     bcf = bcf.(t)
-    return InitialDataSetID(t, ω, S, bcf)
+    return InitialDataSetID(ω, t, S, bcf)
 end
 
 function InitialData(
@@ -79,7 +79,7 @@ function InitialData(
     S = max.(S, 0.0)
     t = collect(range(0, T_c, length=n_time))
     bcf = bcf.(t)
-    return InitialDataSetID(t, ω, S, bcf)
+    return InitialDataSetID(ω, t, S, bcf)
 end
 
 function InitialData(
@@ -91,7 +91,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=500,) :: InitialDataSetSVD
+    n_time::Int=500) :: InitialDataSetSVD
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
@@ -101,6 +101,6 @@ function InitialData(
     t = collect(range(0, T_c, length=n_time))
     bcf = bcf.(t)
     dC = dC.(t)
-    return InitialDataSetSVD(t, ω, w, S, bcf, dC)
+    return InitialDataSetSVD(ω, t, w, S, bcf, dC)
 end
 
