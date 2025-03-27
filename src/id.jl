@@ -47,7 +47,7 @@ function sort_and_rescale(wk::AbstractVector{<:Real}, zk::AbstractVector{<:Real}
 end
 
 function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}},
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, idx::Vector{Int}, B::AbstractMatrix{<:Real})
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, idx::Vector{Int}, B::AbstractMatrix{<:Real})
     # Estimated frequencies: use the first frank_final indices.
     frank = size(B, 2)
     wk = ω[idx[1:frank]]
@@ -64,7 +64,7 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
 end
 
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
 
@@ -72,40 +72,40 @@ function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:
     frank, idx, B, err1 = id_freq(fmat, eps, rand)
     println("Error in ID: ", err1)
     
-    return id_discr_sub(sbeta, cc, t, ω, idx, B)
+    return id_discr_sub(sbeta, cc, ω, t, idx, B)
 end
 
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
     
     # Perform the Interpolative Decomposition (ID).
     idx, B, err1 = id_freq(fmat, frank, rand)
     
-    return id_discr_sub(sbeta, cc, t, ω, idx, B)
+    return id_discr_sub(sbeta, cc, ω, t, idx, B)
 end
 
-function id_discr(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, eps::Real; rand::Bool=false)
-    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
+function id_discr(qnsd::Function, bcf::Function, Ω_min::Real, Ω_max::Real, T_max::Real, 
+    N_ω::Integer, N_t::Integer,　eps::Real; rand::Bool=false)
+    t, ω = equispaced_grid(Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return id_discr(sbeta, cc, t, ω, eps; rand=rand)
+    return id_discr(sbeta, cc, ω, t, eps; rand=rand)
 end
 
-function id_discr(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, frank::Int; rand::Bool=false)
-    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
+function id_discr(qnsd::Function, bcf::Function, Ω_min::Real, Ω_max::Real, T_max::Real, 
+    N_ω::Integer, N_t::Integer, frank::Int; rand::Bool=false)
+    t, ω = equispaced_grid(Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return id_discr(sbeta, cc, t, ω, frank; rand=rand)
+    return id_discr(sbeta, cc, ω, t, frank; rand=rand)
 end
 
 function id_discr(dataset::InitialDataSetID, eps::Real; rand::Bool=false)
-    return id_discr(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, eps; rand=rand)
+    return id_discr(dataset.qnsd, dataset.bcf, dataset.freq, dataset.time, eps; rand=rand)
 end
 
 function id_discr(dataset::InitialDataSetID, frank::Int; rand::Bool=false)
-    return id_discr(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, frank; rand=rand)
+    return id_discr(dataset.qnsd, dataset.bcf, dataset.freq, dataset.time, frank; rand=rand)
 end

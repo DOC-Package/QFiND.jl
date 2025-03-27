@@ -203,7 +203,6 @@ function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64
     end
 end
 
-
 # Fermionic QNSD
 abstract type FermionicQNSD <: QuantumNoiseSpectralDensity end
 struct FermionicQNSD_Plus <: FermionicQNSD 

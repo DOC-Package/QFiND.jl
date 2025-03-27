@@ -52,7 +52,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=200) :: InitialDataSetID
+    n_time::Int=500) :: InitialDataSetID
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
@@ -71,7 +71,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=200) :: InitialDataSetID
+    n_time::Int=500) :: InitialDataSetID
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
@@ -91,9 +91,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=200,) :: InitialDataSetSVD
-    #grid::string="eq") :: InitialDataSetSVD
-
+    n_time::Int=500,) :: InitialDataSetSVD
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs

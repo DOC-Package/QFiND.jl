@@ -1,10 +1,10 @@
 function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Number})
-    # Sort frequencies and corresponding coefficients in ascending order
+    # Sort frequencies and corresponding coeffficients in ascending order
     perm = sortperm(wk)
     wk = wk[perm]
     gk = gk[perm]
     Nsp = length(wk)
-    # Rescale the frequencies and coefficients
+    # Rescale the frequencies and coeffficients
     wk = wk ./ icm2ifs
     gk = gk ./ icm2ifs^2.0
     
@@ -26,11 +26,11 @@ function id_discr_c_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comp
     println("Error in LS: ", err)
     println("Number of sample points: ", frank)
     
-    return (nsp=Nsp, freq=wk, coef=gk)
+    return (nsp=Nsp, freq=wk, coeff=gk)
 end
 
 function id_discr_c(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
     # Create the core matrix f.
     fmat = create_integrand_c(sbeta, t, ω)
 
@@ -42,7 +42,7 @@ function id_discr_c(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{
 end
 
 function id_discr_c(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
-    t::AbstractVector{<:Real}, ω::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
     # Create the core matrix f.
     fmat = create_integrand_c(sbeta, t, ω)
     
@@ -52,26 +52,26 @@ function id_discr_c(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{
     return id_discr_c_sub(sbeta, cc, ω, idx, B, rand)
 end
 
-function id_discr_c(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, eps::Real; rand::Bool=false)
-    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
+function id_discr_c(qnsd::Function, bcf::Function, Ω_min::Real, Ω_max::Real, T_max::Real, 
+    N_ω::Integer, N_t::Integer, eps::Real; rand::Bool=false)
+    t, ω = equispaced_grid(Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return id_discr_c(sbeta, cc, t, ω, eps; rand=rand)
+    return id_discr_c(sbeta, cc, ω, t, eps; rand=rand)
 end
 
-function id_discr_c(qnsd::Function, bcf::Function, N_t::Integer, N_ω::Integer, 
-    tc::Real, Ω_min::Real, Ω_max::Real, frank::Int; rand::Bool=false)
-    t, ω = equispaced_grid(Ω_min, Ω_max, tc; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
+function id_discr_c(qnsd::Function, bcf::Function, Ω_min::Real, Ω_max::Real, T_max::Real, 
+    N_ω::Integer, N_t::Integer, frank::Int; rand::Bool=false)
+    t, ω = equispaced_grid(Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)
-    return id_discr_c(sbeta, cc, t, ω, frank; rand=rand)
+    return id_discr_c(sbeta, cc, ω, t, frank; rand=rand)
 end
 
 function id_discr_c(dataset::InitialDataSetID, eps::Real; rand::Bool=false)
-    return id_discr_c(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, eps; rand=rand)
+    return id_discr_c(dataset.qnsd, dataset.bcf, dataset.freq, dataset.time, eps; rand=rand)
 end
 
 function id_discr_c(dataset::InitialDataSetID, frank::Int; rand::Bool=false)
-    return id_discr_c(dataset.qnsd, dataset.bcf, dataset.time, dataset.freq, frank; rand=rand)
+    return id_discr_c(dataset.qnsd, dataset.bcf, dataset.freq, dataset.time, frank; rand=rand)
 end

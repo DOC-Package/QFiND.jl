@@ -71,6 +71,11 @@ function (b::BosonicBCF_Imag)(t::Real) :: Float64
     return A
 end
 
+function reorganization_energy(sd::SpectralDensity)
+    integrand(ω) = sd(ω) / ω / π
+    return quadgk(ω -> integrand(ω), 0.0, Inf; atol=1e-12)[1]
+end
+
 # Bosonic BCF
 function (b::BosonicBCF_dt)(t::Real) :: ComplexF64
     # Real part of the BCF
