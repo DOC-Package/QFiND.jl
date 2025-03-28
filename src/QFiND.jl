@@ -9,7 +9,7 @@ export sd_nodes, sd_weights
 export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_HighT, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
-export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt
+export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
 export esprit_decomp, DrudeHighT, BrownianHighT

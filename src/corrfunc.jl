@@ -7,7 +7,7 @@ abstract type BosonicBathCorrelationFunction <: BathCorrelationFunction end
 struct BosonicBCF <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 BosonicBCF(specdens::SpectralDensity, Temp::Real) = BosonicBCF(specdens, Temp, Inf)
 
@@ -15,7 +15,7 @@ BosonicBCF(specdens::SpectralDensity, Temp::Real) = BosonicBCF(specdens, Temp, I
 struct BosonicBCF_Real <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 BosonicBCF_Real(specdens::SpectralDensity, Temp::Real) = BosonicBCF_Real(specdens, Temp, Inf)
 
@@ -23,14 +23,14 @@ BosonicBCF_Real(specdens::SpectralDensity, Temp::Real) = BosonicBCF_Real(specden
 struct BosonicBCF_Imag <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 BosonicBCF_Imag(specdens::SpectralDensity, Temp::Real) = BosonicBCF_Imag(specdens, Temp, Inf)
 
 struct BosonicBCF_dt <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 BosonicBCF_dt(specdens::SpectralDensity, Temp::Real) = BosonicBCF_dt(specdens, Temp, Inf)
 
@@ -46,11 +46,11 @@ function (b::BosonicBCF)(t::Real) :: ComplexF64
             (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / π
         end
     end
-    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     # Imaginary part of the BCF
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
-    A, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    A, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     return S + 1.0im * A
 end
@@ -65,20 +65,20 @@ function (b::BosonicBCF_Real)(t::Real) :: Float64
             (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / π
         end
     end
-    S, err = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    S, err = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
     return S
 end
 
 # Imaginary part of a BCF for a time t.
 function (b::BosonicBCF_Imag)(t::Real) :: Float64
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
-    A, err = quadgk(ω -> integrand_im(ω), 0.0, v.Ω_c * icm2ifs; atol=1e-12)
+    A, err = quadgk(ω -> integrand_im(ω), 0.0, v.uplim * icm2ifs; atol=1e-12)
     return A
 end
 
-function reorganization_energy(sd::SpectralDensity; Ω_c::Real=Inf) :: Float64
+function reorganization_energy(sd::SpectralDensity; uplim::Real=Inf) :: Float64
     integrand(ω) = sd(ω) / ω / π
-    E_r, err = quadgk(ω -> integrand(ω), 0.0, Ω_c * icm2ifs; atol=1e-12)
+    E_r, err = quadgk(ω -> integrand(ω), 0.0, uplim; atol=1e-12)
     return E_r
 end
 
@@ -93,11 +93,11 @@ function (b::BosonicBCF_dt)(t::Real) :: ComplexF64
             - ω * (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * sin(ω * t) / π
         end
     end
-    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     # Imaginary part of the BCF
     integrand_im(ω) = - ω * b.specdens(ω; scale=icm2ifs) * cos(ω * t) / π
-    A, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    A, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     return S + 1.0im * A
 end
@@ -109,14 +109,14 @@ abstract type FermionicBathCorrelationFunction <: BathCorrelationFunction end
 struct FermionicBCF_Minus <: FermionicBathCorrelationFunction 
     specdens::Function
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 
 # 
 struct FermionicBCF_Plus <: FermionicBathCorrelationFunction 
     specdens::Function
     Temp::Real
-    Ω_c::Real
+    uplim::Real
 end
 
 # Fermionic BCF Minus
@@ -131,11 +131,11 @@ function (b::FermionicBCF_Minus)(t::Real) :: ComplexF64
             (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / π
         end
     end
-    Cr, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    Cr, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     # Imaginary part of the BCF
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
-    Ci, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    Ci, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     return Cr + 1.0im * Ci
 end
@@ -151,11 +151,11 @@ function (b::FermionicBCF_Plus)(t::Real) :: ComplexF64
             (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / π
         end
     end
-    Cr, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    Cr, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     # Imaginary part of the BCF
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π
-    Ci, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.Ω_c * icm2ifs; atol=1e-12)
+    Ci, err2 = quadgk(ω -> integrand_im(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
 
     return Cr + 1.0im * Ci
 end

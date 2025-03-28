@@ -9,7 +9,7 @@ function smoothing(ω, J)
     J2 = J[idx+1:end]
     plot_qnsd(ω, J, "fmo.png")
     #
-    S1, N1 = denoise(J1; factor=0.95)
+    S1, N1 = denoise(J1; factor=1.5)
     S2, N2 = denoise(J2; factor=0.5)
     println("N1: ", norm(N1))
     println("N2: ", norm(N2))
