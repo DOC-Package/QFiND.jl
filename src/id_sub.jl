@@ -104,6 +104,26 @@ end
 
 Perform interpolative decomposition on matrix `f` with a specified rank `frank`.
 """
+function id_time(B::AbstractMatrix{Float64}, brank::Int, rnd::Bool)
+
+    # Compute the interpolative decomposition using the tolerance mode.
+    opts = LRAOptions(rank=brank, sketch=:none)
+    BT = transpose(B)
+    id_obj = idfact(BT, opts)
+    idx = id_obj[:sk]
+    
+    # The skeleton matrix B is simply the columns of f0 indexed by idx.
+    D = Matrix(transpose(BT[:, idx]))
+
+    # The reconstructed approximation.
+    BT1 = ID(BT, id_obj)
+
+    # Compute the error.
+    err = norm(Matrix(BT1) - BT)
+    
+    return idx, D, err
+end
+
 function id_time(B::AbstractMatrix{ComplexF64}, brank::Int, rnd::Bool)
 
     # Compute the interpolative decomposition using the tolerance mode.

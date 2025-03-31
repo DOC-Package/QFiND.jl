@@ -21,6 +21,23 @@ function nnls_weight(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B
     return z, err
 end
 
+function nnls_weight_time(cc::AbstractVector{<:Complex{<:Real}}, t::Vector{<:Real}, B::AbstractMatrix{<:Real})
+    N_t = length(t)
+    # check if cc has the correct length
+    if length(cc) != N_t
+        throw(ArgumentError("The length of the BCF vector must be equal to the length of the time vector."))
+    end
+    frank = size(B, 2)
+    idx, D, err = id_time(B, frank, false)
+    # Construct the vector c = [real(cc); imag(cc)].
+    c = vcat(real.(cc), imag.(cc))
+    c = c[idx[1:frank]]
+    # Solve the NNLS problem: minimize ||B*g - c|| subject to g ≥ 0.
+    z = nonneg_lsq(D, c; alg=:nnls) |> vec
+    err = norm(D * z - c)
+    return z, err
+end
+
 function sort_and_rescale(wk::AbstractVector{<:Real}, zk::AbstractVector{<:Real}, gk::AbstractVector{<:Real})
     # Sort frequencies and corresponding coefficients in ascending order
     perm = sortperm(wk)
@@ -53,7 +70,7 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     wk = ω[idx[1:frank]]
     
     # Estimate weights via NNLS
-    zk, err2 = nnls_weight(cc, t, B)
+    zk, err2 = nnls_weight_time(cc, t, B)
     gk = zk .* sbeta[idx[1:frank]]
     Nsp, wk, zk, gk = sort_and_rescale(wk, zk, gk)
     
