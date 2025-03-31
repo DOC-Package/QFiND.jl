@@ -115,6 +115,8 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, M_sp::Int)
     ωk, gk = orthpoly_discretization(ωS, M_sp)
 
     # Normalize zk
+    Ω_min = first(ω)
+    Ω_max = last(ω)
     if Ω_min < 0
         norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0)
         norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max)
@@ -124,7 +126,7 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, M_sp::Int)
     end
     gk .*= norm
 
-    return (freq = ωk, coef = gk)
+    return (freq = ωk, coeff = gk)
 end
 
 

@@ -27,7 +27,7 @@ using QFiND
     @test !isnothing(res)
     U = res.basis_time
     V = res.basis_freq
-    zk = res.coef
+    zk = res.coeff
     Dt = res.Dt
     alpha = Dt * zk
     evaluate_error(U, zk, dataset.bcf)

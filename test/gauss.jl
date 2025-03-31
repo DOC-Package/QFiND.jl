@@ -1,6 +1,5 @@
 include("plot.jl")
 using Test
-using CairoMakie
 using QFiND
 
 @testset "utils.jl" begin
@@ -23,7 +22,7 @@ using QFiND
     res = gausslegendre_discr(sbeta, Ω_min, Ω_max, M_sp)
     @test !isnothing(res)
     wk = res.freq
-    gk = res.coef
+    gk = res.coeff
 
     evaluate_error(wk, gk, bcf, T_c, N_t)
     plot_bcf(wk, gk, bcf, T_c, N_t)

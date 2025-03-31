@@ -25,8 +25,8 @@ using QFiND
     res = id_discr(dataset, eps)
     @test !isnothing(res)
     freq = res.freq
-    coef = res.coef
-    evaluate_error(freq, coef, bcf, T_c, N_t)
-    plot_bcf(freq, coef, bcf, T_c, N_t, "bcf_bo.png")
+    coeff = res.coeff
+    evaluate_error(freq, coeff, bcf, T_c, N_t)
+    plot_bcf(freq, coeff, bcf, T_c, N_t, "bcf_bo.png")
 
 end
