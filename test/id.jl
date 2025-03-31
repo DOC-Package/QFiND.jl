@@ -39,6 +39,5 @@ using QFiND
     freq = res.freq
     coeff = res.coeff
     evaluate_error(freq, coeff, bcf, T_max, N_t)
-    plot_bcf(freq, coeff, bcf, T_max, N_t, "bcf_ohmic_id.png")
 
 end
