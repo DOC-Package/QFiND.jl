@@ -26,7 +26,7 @@ function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int, fil
     return plot_qnsd(w, j, filename)
 end
 
-function plot_bcf_sub(
+function plot_bcf(
     t::AbstractVector{<:Real},
     approx::AbstractVector{ComplexF64},
     reference::AbstractVector{ComplexF64},
@@ -101,7 +101,20 @@ function plot_bcf(
     reference = bcf.(t)
     approx = sumexp.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
     error = (approx - reference) ./ abs(bcf(0.0))
-    return plot_bcf_sub(t, approx, reference, error, filename)
+    return plot_bcf(t, approx, reference, error, filename)
+end
+
+function plot_bcf(
+    wk::AbstractVector{Float64}, 
+    gk::AbstractVector{<:Number}, 
+    bcf::Function, 
+    t::AbstractVector{<:Real},
+    filename::String)
+
+    reference = bcf.(t)
+    approx = sumexp.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    error = (approx - reference) ./ abs(bcf(0.0))
+    return plot_bcf(t, approx, reference, error, filename)
 end
 
 function plot_bcf(
@@ -116,7 +129,7 @@ function plot_bcf(
     reference = bcf.(t)
     approx = sumexp.(t, Ref(a*icm2ifs), Ref(c*icm2ifs^2.0))
     error = (approx - reference) ./ abs(bcf(0.0))
-    return plot_bcf_sub(t, approx, reference, error, filename)
+    return plot_bcf(t, approx, reference, error, filename)
 end
 
 function plot_bcf(
@@ -129,7 +142,7 @@ function plot_bcf(
     cmax = maximum(abs.(reference))
     approx = U * zk
     error = (approx - reference) ./ cmax
-    return plot_bcf_sub(t, approx, reference, error, filename)
+    return plot_bcf(t, approx, reference, error, filename)
 end
 
 function plot_basis_time(U::AbstractMatrix{ComplexF64}, t::AbstractVector{<:Real})

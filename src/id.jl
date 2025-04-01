@@ -80,6 +80,20 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     return (nsp=Nsp, freq=wk, coeff=gk, weight=zk, frank=frank)
 end
 
+function id_discr_t(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
+    ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    # Create the core matrix f.
+    fmat = create_integrand(sbeta, t, ω)
+
+    
+
+    # Perform the Interpolative Decomposition (ID).
+    frank, idx, B, err1 = id_freq(fmat, eps, rand)
+    println("Error in ID: ", err1)
+    
+    return id_discr_sub(sbeta, cc, ω, t, idx, B)
+end
+
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
     # Create the core matrix f.
