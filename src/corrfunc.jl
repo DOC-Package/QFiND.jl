@@ -46,7 +46,7 @@ function (b::BosonicBCF)(t::Real) :: ComplexF64
             (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / π
         end
     end
-    S, err1 = quadgk(ω -> integrand_re(ω), 0.0, b.uplim * icm2ifs; atol=1e-12)
+    S, err1 = quadgk(ω -> integrand_re(ω), 1e-15, b.uplim * icm2ifs; atol=1e-12)
 
     # Imaginary part of the BCF
     integrand_im(ω) = -b.specdens(ω; scale=icm2ifs) * sin(ω * t) / π

@@ -161,6 +161,10 @@ function (specdens::RationalSD)(ω::Float64; scale::Float64=1.0) :: Float64
     for i in eachindex(specdens.poles)
         res += residues[i] / (ω - poles[i])
     end
+    res = real(res)
+    if res < 0.0
+        res = 0.0
+    end
     return sgn * scale * res
 end
 
