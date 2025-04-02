@@ -70,7 +70,7 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     wk = ω[idx[1:frank]]
     
     # Estimate weights via NNLS
-    zk, err2 = nnls_weight_time(cc, t, B)
+    zk, err2 = nnls_weight(cc, t, B)
     gk = zk .* sbeta[idx[1:frank]]
     Nsp, wk, zk, gk = sort_and_rescale(wk, zk, gk)
     
@@ -85,9 +85,11 @@ function id_discr_t(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
 
-    
+    fmat_full = fmat
+    # Perform the Interpolative Decomposition (ID) in time.
+    idx_time, fmat, err1 = id_time(fmat_full, 200, rand)
 
-    # Perform the Interpolative Decomposition (ID).
+    # Perform the Interpolative Decomposition (ID) in frequency.
     frank, idx, B, err1 = id_freq(fmat, eps, rand)
     println("Error in ID: ", err1)
     

@@ -31,6 +31,11 @@ struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
 end
 
+struct RationalSD <: SpectralDensity
+    poles::Vector{ComplexF64}
+    residues::Vector{ComplexF64}
+end
+
 struct WideBandSD <: SpectralDensity
     Γ :: Float64
 end
@@ -146,6 +151,19 @@ function (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) :: Float64
     res = evaluate(specdens.bary, ω)
     return sgn * scale * res
 end
+
+function (specdens::RationalSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ω = abs(ω)
+    poles = specdens.poles .* scale
+    residues = specdens.residues .* scale
+    res = 0.0
+    for i in eachindex(specdens.poles)
+        res += residues[i] / (ω - poles[i])
+    end
+    return sgn * scale * res
+end
+
 
 """
     (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) -> Float64

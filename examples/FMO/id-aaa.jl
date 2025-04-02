@@ -13,13 +13,20 @@ T_c = 1000.0
 N_t = 1000
 eps = 1e-4
 
-data = readdlm("jw-fmo.txt")
+data = readdlm("fmo_smoothed.txt")
+col1 = data[:, 1]
+col2 = data[:, 2] #.* data[:, 1] .^ 2.0
+ω = Float64.(col1) 
+J = Float64.(col2) 
+#S = smoothing(ω, J)
 
-residues = data[:, 1] + 1im * data[:, 2]
-poles = data[:, 3] + 1im * data[:, 4]
-residues = residues .* 35.0 ./ 42.734770
-sdens = RationalSD(poles, residues) 
-plot_qnsd(sdens, 0.0, Ω_max, 2000, "fmo_aaa.png")
+bary = aaa(ω, J; tol=1e-4*maximum(J))
+check(bary)
+sdens = AAAfittedSD(bary)
+plot_qnsd(sdens, 0.0, Ω_max * icm2ifs, 2000, "fmo_aaa.png")
+E0 = reorganization_energy(sdens; uplim=Ω_c)
+println("Reorganization energy: ", E0)
+E_r = 50.0
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)

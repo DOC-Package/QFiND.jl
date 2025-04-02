@@ -4,7 +4,7 @@ export icm2ifs
 export sumexp, equispaced_grid, gausslegendre_discr, evaluate_error
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
-export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD
+export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD
 export sd_nodes, sd_weights
 export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_HighT, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
