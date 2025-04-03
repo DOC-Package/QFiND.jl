@@ -15,7 +15,7 @@ J[J .< 0.0] .= 0.0
 #J[idx] .= 0.0
 
 println("AAA started")
-r = aaa(ω, J; tol=1e-12, max_degree=1500, lookahead=200)
+r = aaa(ω, J; tol=1e-12, max_degree=1500, lookahead=300)
 println("degree: ", length(r.nodes))
 err = norm(r.(ω) - J)
 println("error: ", err)

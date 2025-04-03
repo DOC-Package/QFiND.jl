@@ -85,7 +85,7 @@ function (b::BosonicBCF_Imag)(t::Real) :: Float64
 end
 
 function reorganization_energy(sd::SpectralDensity; lb::Real=0.0, ub::Real=Inf) :: Float64
-    integrand(ω) = sd(ω) / ω / π
+    integrand(ω) = sd(ω) / ω / 2.0
     E_r, err = quadgk(ω -> integrand(ω), lb, ub; atol=1e-12)
     return E_r
 end

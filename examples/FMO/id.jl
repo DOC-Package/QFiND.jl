@@ -21,7 +21,8 @@ end
 sdens = AAAfittedSD(r)
 E0 = reorganization_energy(sdens; uplim=Ω_c)
 println("Reorganization energy: ", E0)
-E_r = 50.0
+E_r = 35.0
+factor = E_r / E0
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)

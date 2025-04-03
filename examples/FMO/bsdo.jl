@@ -29,7 +29,7 @@ bcf = BosonicBCF(sdens, Temp, Ω_c)
 
 res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_w)
 freq = res.freq
-coeff = res.coeff
+coeff = res.coeff * π / 2.0
 evaluate_error(freq, coeff, bcf, T_c, N_t)
 plot_bcf(freq, coeff, bcf, T_c, N_t, "bcf_fmo_bsdo.png")
 
