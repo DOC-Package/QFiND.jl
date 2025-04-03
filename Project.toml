@@ -4,7 +4,6 @@ authors = ["Hideaki Takahashi <takahashi.hideaki.w33@kyoto-u.jp> and contributor
 version = "1.0.0-DEV"
 
 [deps]
-ExpFit = "3e354d20-bd3f-44fe-967b-b5188f355960"
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 LowRankApprox = "898213cb-b102-5a47-900c-97e73b919f73"
