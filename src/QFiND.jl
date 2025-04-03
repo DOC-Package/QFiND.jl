@@ -12,11 +12,9 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
-export esprit_decomp, DrudeHighT, BrownianHighT
 export mylawson
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
-import ExpFit
 
 include("constants.jl")
 include("abstract.jl")
@@ -37,6 +35,5 @@ using NonNegLeastSquares
 using QuadGK 
 using RationalFunctionApproximation
 using FastGaussQuadrature
-using ExpFit
 
 end
