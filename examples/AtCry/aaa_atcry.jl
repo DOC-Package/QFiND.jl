@@ -11,7 +11,7 @@ col2 = data[:, 2]
 ω = Float64.(col1) 
 J = Float64.(col2)
 J[J .< 0.0] .= 0.0
-idx = findall(ω .< 1.0)
+#idx = findall(ω .< 1.0)
 #J[idx] .= 0.0
 
 println("AAA started")
