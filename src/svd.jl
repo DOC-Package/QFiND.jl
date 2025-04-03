@@ -24,7 +24,6 @@ end
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real)
     fmat = create_integrand_c(sbeta, t, ω)
-    # Perform the SVD
     U, sv, V = svd(fmat)
     frank = count(>(eps * sv[1]), sv)
     sv = sv[1:frank]
@@ -39,7 +38,6 @@ end
 function svd_intermed_decomp(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, frank::Int)
     fmat = create_integrand_c(sbeta, t, ω)
-    # Perform the SVD
     U, sv, V = svd(fmat)
     U = U[:, 1:frank]
     V = V[:, 1:frank]

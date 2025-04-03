@@ -1,6 +1,6 @@
 module QFiND
 
-export icm2ifs
+export icm2ifs, icm2au, icm2ev, ħ, kb
 export sumexp, equispaced_grid, gausslegendre_discr, evaluate_error
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
@@ -12,7 +12,6 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
-export mylawson
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
 

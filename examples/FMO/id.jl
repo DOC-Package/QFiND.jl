@@ -19,7 +19,7 @@ r = open("r_fmo.bin", "r") do io
 end
 
 sdens = AAAfittedSD(r)
-E0 = reorganization_energy(sdens; uplim=Ω_c)
+E0 = reorganization_energy(sdens; ub=Ω_c)
 println("Reorganization energy: ", E0)
 E_r = 35.0
 factor = E_r / E0

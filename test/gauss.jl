@@ -24,5 +24,4 @@ using QFiND
     gk = res.coeff
 
     evaluate_error(wk, gk, bcf, T_c, N_t)
-    plot_bcf(wk, gk, bcf, T_c, N_t)
 end

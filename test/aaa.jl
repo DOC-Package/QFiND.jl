@@ -1,4 +1,3 @@
-include("plot.jl")
 using Test
 using QFiND
 using RationalFunctionApproximation
