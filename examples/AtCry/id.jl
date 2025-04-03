@@ -5,16 +5,16 @@ using RationalFunctionApproximation
 using Statistics
 using Serialization
 
-Temp = 300.0
-Ω_c = 495.0
-Ω_min = -500.0
-Ω_max = 500.0
-N_w = 2000
-T_c = 1500.0
-N_t = 2000
-eps = 6e-2
+Temp = 0.0
+Ω_c = 4000.0
+Ω_min = 0.0
+Ω_max = 4000.0
+N_w = 4000
+T_c = 250.0
+N_t = 500
+eps = 2e-2
 
-r = open("r_fmo.bin", "r") do io
+r = open("r_atcry.bin", "r") do io
     deserialize(io)
 end
 
@@ -31,4 +31,4 @@ res = id_discr(dataset, eps)
 freq = res.freq
 coeff = res.coeff
 evaluate_error(freq, coeff, dataset.bcf, dataset.time)
-plot_bcf(freq, coeff, dataset.bcf, dataset.time, "bcf_fmo_id.png")
+plot_bcf(freq, coeff, dataset.bcf, dataset.time, "bcf_atcry_id.png")

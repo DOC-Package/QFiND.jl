@@ -2,19 +2,14 @@
 Calculate the error between the approximated and exact correlation functions.
 """
 function evaluate_error(
-    ωk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
-    bcf::Function, 
-    Tc::Real, 
-    N_t::Int)
+    approx::AbstractVector{<:Number},
+    reference::AbstractVector{<:Number}, 
+    t::AbstractVector{<:Real})
 
-    t = range(0, Tc, length=N_t)
-    reference = bcf.(t)
-    approx = sumexp.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
-    error = approx - reference
-    
+    error = approx - reference    
     # Compute the normalized errors.
-    norm_val = abs(bcf(0.0))
+    N_t = length(t)
+    norm_val = abs(reference[1])
     normalized_max_error = maximum(abs.(error)) / norm_val
     normalized_avg_error = sum(abs.(error)) / (norm_val * N_t)
     
@@ -26,19 +21,30 @@ function evaluate_error(
     ωk::AbstractVector{Float64}, 
     gk::AbstractVector{<:Number}, 
     bcf::Function, 
+    Tc::Real, 
+    N_t::Int)
+
+    t = range(0, Tc, length=N_t)
+    evaluate_error(ωk, gk, bcf, t)
+end
+
+function evaluate_error(
+    ωk::AbstractVector{Float64}, 
+    gk::AbstractVector{<:Number}, 
+    bcf::Function, 
     t::AbstractVector{<:Real})
 
-    reference = bcf.(t)
+    evaluate_error(ωk, gk, bcf.(t), t)
+end
+
+function evaluate_error(
+    ωk::AbstractVector{Float64}, 
+    gk::AbstractVector{<:Number}, 
+    reference::AbstractVector{<:Number}, 
+    t::AbstractVector{<:Real})
+
     approx = sumexp.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
-    error = approx - reference
-    
-    # Compute the normalized errors.
-    norm_val = abs(bcf(0.0))
-    normalized_max_error = maximum(abs.(error)) / norm_val
-    normalized_avg_error = sum(abs.(error)) / (norm_val * N_t)
-    
-    println("Normalized maximum error: ", normalized_max_error)
-    println("Normalized mean absolute error: ", normalized_avg_error)
+    evaluate_error(approx, reference, t)
 end
 
 function evaluate_error(

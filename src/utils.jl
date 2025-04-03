@@ -88,17 +88,3 @@ end
 function sumexp(t::Float64, a::AbstractVector{ComplexF64}, c::AbstractVector{ComplexF64}) :: ComplexF64
     return sum(c .* exp.(-a .* t))
 end
-
-function mylawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
-    x1 = setdiff(x, r.nodes)
-    ⍺, β = lawson(x1, f.(x1), r.nodes, r.values, r.weights, nsteps)
-    return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
-end
-
-function mylawson(x::Vector{<:Real}, f::Vector{<:Real}, r::Barycentric, nsteps::Integer)
-    idx = findall(xi -> !(xi in r.nodes), x)
-    x1 = x[idx]
-    f1 = f[idx]
-    ⍺, β = lawson(x1, f1, r.nodes, r.values, r.weights, nsteps)
-    return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
-end
