@@ -1,7 +1,7 @@
 module QFiND
 
 export icm2ifs, icm2au, icm2ev, ħ, kb
-export sumexp, equispaced_grid, gausslegendre_discr, evaluate_error
+export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD

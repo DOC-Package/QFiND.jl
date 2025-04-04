@@ -11,7 +11,7 @@ using QFiND
     Ω_min = -400.0
     Ω_max = 400.0
     N_w = 2000
-    M_sp = 60
+    M_sp = 100
     T_c = 500.0
     N_t = 200
 
@@ -29,7 +29,6 @@ using QFiND
     Ω_min = 0.0
     Ω_max = 500.0
     N_w = 2000
-    M_sp = 60
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
 

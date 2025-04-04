@@ -51,7 +51,7 @@ function (b::BosonicBCF)(t::Real) :: ComplexF64
             b.specdens(ω; scale=icm2ifs) * cos(ω * t) / 2.0
         else
             β = ħ * 1e15 / (kb * b.Temp)
-            (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / 4.0
+            (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / 2.0
         end
     end
     S, err1 = quadgk(ω -> integrand_re(ω), b.lb * icm2ifs, b.ub * icm2ifs; atol=1e-12)
@@ -70,7 +70,7 @@ function (b::BosonicBCF_Real)(t::Real) :: Float64
             b.specdens(ω; scale=icm2ifs) * cos(ω * t) / 2.0
         else
             β = ħ * 1e15 / (kb * b.Temp)
-            (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / 4.0
+            (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * cos(ω * t) / 2.0
         end
     end
     S, err = quadgk(ω -> integrand_re(ω), b.lb * icm2ifs, b.ub * icm2ifs; atol=1e-12)
@@ -93,7 +93,7 @@ function (b::BosonicBCF_dt)(t::Real) :: ComplexF64
             - ω * b.specdens(ω; scale=icm2ifs) * sin(ω * t) / 2.0
         else
             β = ħ * 1e15 / (kb * b.Temp)
-            - ω * (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * sin(ω * t) / 4.0
+            - ω * (b.specdens(ω; scale=icm2ifs) / tanh(0.5 * β * ω)) * sin(ω * t) / 2.0
         end
     end
     S, err1 = quadgk(ω -> integrand_re(ω), b.lb * icm2ifs, b.ub * icm2ifs; atol=1e-12)

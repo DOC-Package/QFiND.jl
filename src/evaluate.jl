@@ -43,7 +43,7 @@ function evaluate_error(
     reference::AbstractVector{<:Number}, 
     t::AbstractVector{<:Real})
 
-    approx = sumexp.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
     evaluate_error(approx, reference, t)
 end
 
@@ -56,7 +56,7 @@ function evaluate_error(
 
     t = range(0, Tc, length=N_t)
     reference = bcf.(t)
-    approx = sumexp.(t, Ref(ak*icm2ifs), Ref(ck*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(ak*icm2ifs), Ref(ck*icm2ifs^2.0))
     error = approx - reference
     
     # Compute the normalized errors.

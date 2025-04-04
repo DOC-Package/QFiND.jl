@@ -109,7 +109,7 @@ function plot_bcf(
     t::AbstractVector{<:Real},
     filename::String)
 
-    approx = sumexp.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
     return plot_bcf(t, approx, reference, filename)
 end
 
@@ -120,7 +120,7 @@ function plot_bcf(
     t::AbstractVector{<:Real},
     filename::String)
 
-    approx = sumexp.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
     return plot_bcf(t, approx, bcf.(t), filename)
 end
 
@@ -134,7 +134,7 @@ function plot_bcf(
 
     t = range(0, Tc, length=N_t)
     reference = bcf.(t)
-    approx = sumexp.(t, Ref(a*icm2ifs), Ref(c*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(a*icm2ifs), Ref(c*icm2ifs^2.0))
     return plot_bcf(t, approx, reference, filename)
 end
 
