@@ -1,26 +1,27 @@
 include("../plot.jl")
+include("../save.jl")
 using LinearAlgebra
 using QFiND
 using RationalFunctionApproximation
 using Statistics
 using Serialization
 
-Temp = 300.0
-Ω_c = 495.0
+Temp = 0.0
+Ω_c = 500.0
 Ω_min = -500.0
 Ω_max = 500.0
 N_w = 2000
 T_c = 1500.0
 N_t = 2000
-eps = 6e-2
+E_reorg = 35.0
+eps = 1e-2
 
 r = open("r_fmo.bin", "r") do io
     deserialize(io)
 end
 
-E_reorg = 35.0
 sdens = AAAfittedSD(r, E_reorg)
-println("Reorganization energy: ", sdens.reorgene)
+println("Reorganization energy: ", sdens.λ)
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)
@@ -31,4 +32,4 @@ freq = res.freq
 coeff = res.coeff
 evaluate_error(freq, coeff, dataset.bcf, dataset.time)
 plot_bcf(freq, coeff, dataset.bcf, dataset.time, "bcf_fmo_id.png")
-save_freq_coeff(freq, coeff, "fmo_id.txt")
+save_freq_coeff(freq, sqrt.(coeff), "fmo_id.txt")

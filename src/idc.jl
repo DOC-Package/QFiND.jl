@@ -6,7 +6,7 @@ function sort_and_rescale(wk::AbstractVector{<:Real}, gk::AbstractVector{<:Numbe
     Nsp = length(wk)
     # Rescale the frequencies and coeffficients
     wk = wk ./ icm2ifs
-    gk = gk ./ icm2ifs^2.0
+    gk = gk ./ icm2ifs
     
     return Nsp, wk, gk
 end
@@ -20,7 +20,7 @@ function id_discr_c_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comp
     # Estimate weights via NNLS
     idx1, D, err = id_time(B, frank, rand)
     zk, err = linsys_weight(cc, idx1, D)
-    gk = zk .* sbeta[idx[1:frank]]
+    gk = sqrt(zk .* sbeta[idx[1:frank]])
     Nsp, wk, gk = sort_and_rescale(wk, gk)
     
     println("Error in LS: ", err)

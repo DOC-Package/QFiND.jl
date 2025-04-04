@@ -4,7 +4,7 @@ using QFiND
 @testset "bsdo.jl" begin
     
     s = 1.0
-    alpha = 1.0
+    alpha = 50.0
     gamc = 50.0
     Temp = 300.0
     Ω_c = 1000.0
@@ -15,7 +15,7 @@ using QFiND
     T_c = 500.0
     N_t = 200
 
-    sdens = PowerLawExpSD(s, alpha, gamc)
+    sdens = PowerLawExpSD(s, gamc; alpha=alpha)
 
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)

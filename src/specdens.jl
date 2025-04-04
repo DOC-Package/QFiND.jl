@@ -4,8 +4,23 @@ abstract type SpectralDensity <: Function end
 # Power-law with exponential cutoff
 struct PowerLawExpSD <: SpectralDensity
     s :: Float64   # exponent
-    α :: Float64   # coefficient 
     γ :: Float64   # cutoff frequency
+    α :: Float64   # coefficient 
+    reorgene :: Float64   # reorganization energy
+end
+
+function PowerLawExpSD(s::Float64, γ::Float64; alpha::Union{Float64,Nothing}=nothing, reorgene::Union{Float64,Nothing}=nothing)
+    if (alpha === nothing) == (reorgene === nothing)
+        throw(ArgumentError("Please provide either α or reorgene, but not both."))
+    end
+
+    if alpha !== nothing
+        reorgene = gamma(s)
+        return PowerLawExpSD(s, γ, alpha, reorgene)
+    else
+        alpha = reorgene / gamma(s)
+        return PowerLawExpSD(s, γ, alpha, reorgene)
+    end
 end
 
 # Tannor-Meyer
@@ -31,7 +46,7 @@ end
 
 struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
-    λ::Float64
+    reorgene::Float64
     scale_reorgene::Float64
 end
 AAAfittedSD(bary::Barycentric; lb::Real=0.0, ub::Real=Inf) = AAAfittedSD(bary, reorganization_energy(bary; lb=lb,ub=ub), 1.0)
@@ -62,8 +77,8 @@ function reorganization_energy(bary::Barycentric; lb::Real=0.0,       ub::Real=I
     return E_r
 end
 
-function reorganization_energy(freq::Vector{Float64}, coeff::Vector{Float64})
-    return sum(coeff ./ freq) / 2.0
+function reorganization_energy(ω::Vector{Float64}, g::Vector{Float64})
+    return sum(g.^2.0 ./ ω) / 2.0
 end
 
 """
@@ -75,9 +90,9 @@ function (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
     ω = abs(ω)
     s = specdens.s
-    α = specdens.α
     γ = specdens.γ * scale
-    return sgn * 2.0 * α * γ^(1.0 - s) * ω^s * exp(-ω / γ)
+    α = specdens.α * scale
+    return sgn * 2.0 * α * γ^(-s) * ω^s * exp(-ω / γ)
 end
 
 

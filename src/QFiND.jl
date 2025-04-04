@@ -1,7 +1,7 @@
 module QFiND
 
 export icm2ifs, icm2au, icm2ev, ħ, kb
-export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error
+export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error, save_freq_coeff, mylawson
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD
@@ -14,6 +14,7 @@ export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
+import Printf: @sprintf
 
 include("constants.jl")
 include("abstract.jl")
@@ -27,7 +28,9 @@ include("idc.jl")
 include("svd.jl")
 include("evaluate.jl")
 
+using Printf
 using LinearAlgebra
+using SpecialFunctions
 using LowRankApprox
 using NonNegLeastSquares
 using QuadGK 

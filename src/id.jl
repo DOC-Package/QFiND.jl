@@ -58,7 +58,7 @@ function sort_and_rescale(wk::AbstractVector{<:Real}, zk::AbstractVector{<:Real}
     # Rescale the frequencies and coefficients
     wk = wk ./ icm2ifs
     zk = zk ./ icm2ifs
-    gk = gk ./ icm2ifs^2.0
+    gk = gk ./ icm2ifs
     
     return Nsp, wk, zk, gk
 end
@@ -70,8 +70,8 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     wk = ω[idx[1:frank]]
     
     # Estimate weights via NNLS
-    zk, err2 = nnls_weight(cc, t, B)
-    gk = zk .* sbeta[idx[1:frank]]
+    zk, err2 = nnls_weight(cc, t, B .* 0.5)
+    gk = sqrt.(zk .* sbeta[idx[1:frank]])
     Nsp, wk, zk, gk = sort_and_rescale(wk, zk, gk)
     
     println("Error in NNLS: ", err2)

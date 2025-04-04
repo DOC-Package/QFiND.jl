@@ -2,6 +2,56 @@ using QFiND
 using CairoMakie
 using LaTeXStrings 
 
+function plot_qnsd(
+    ω::AbstractVector{<:Real},
+    approx::AbstractVector{<:Real},
+    reference::AbstractVector{<:Real},
+    filename::String)
+
+    error = (approx - reference) ./ maximum(reference)
+
+    ls1    = 20      # label font size
+    ls2    = 15      # tick label font size
+    lw1    = 2.5     # line width for main lines
+    lw2    = 2.5     # line width for reference lines
+    color1 = :orangered
+    color2 = :royalblue
+    color3 = :black
+
+    fig = Figure(size = (800, 700))
+
+    ax1 = Axis(fig[1, 1],
+        xlabel = "",
+        ylabel = L"J(\omega)",
+        xlabelsize = ls2,
+        ylabelsize = ls2
+    )
+    ax2 = Axis(fig[2, 1],
+        xlabel = L"\omega (\mathrm{cm}^{-1})",
+        ylabel = L"\delta J(\omega)",
+        xlabelsize = ls2,
+        ylabelsize = ls2
+    )
+    lines!(ax1, ω, approx,
+        label = L"\text{Approximation}",
+        color = color1,
+        linewidth = lw1
+    )
+    lines!(ax1, ω, reference,
+        label = L"\text{Reference}",
+        color = color3,
+        linestyle = :dash,
+        linewidth = lw2
+    )
+    lines!(ax2, ω, error,
+        color = color1,
+        linewidth = lw1
+    )
+    axislegend(ax1, position = :rt, labelsize = ls2)
+    save(filename, fig)
+    return fig
+end
+
 function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:Real}, filename::String)
     # Plot the spectral density and save the plot
     fig = Figure()
@@ -91,36 +141,36 @@ function plot_bcf(
 end
 
 function plot_bcf(
-    wk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     bcf::Function, 
     Tc::Real, 
     N_t::Int,
     filename::String)
 
     t = range(0, Tc, length=N_t)
-    plot_bcf(wk, gk, bcf, t, filename)
+    plot_bcf(ω, g, bcf, t, filename)
 end
 
 function plot_bcf(
-    wk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     reference::AbstractVector{<:Number},   
     t::AbstractVector{<:Real},
     filename::String)
 
-    approx = bcf_approx.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(ω), Ref(g))
     return plot_bcf(t, approx, reference, filename)
 end
 
 function plot_bcf(
-    wk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     bcf::Function, 
     t::AbstractVector{<:Real},
     filename::String)
 
-    approx = bcf_approx.(t, Ref(wk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(ω), Ref(g))
     return plot_bcf(t, approx, bcf.(t), filename)
 end
 
@@ -134,7 +184,7 @@ function plot_bcf(
 
     t = range(0, Tc, length=N_t)
     reference = bcf.(t)
-    approx = bcf_approx.(t, Ref(a*icm2ifs), Ref(c*icm2ifs^2.0))
+    approx = bcf_approx.(t, a, c)
     return plot_bcf(t, approx, reference, filename)
 end
 

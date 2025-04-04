@@ -18,54 +18,33 @@ function evaluate_error(
 end
 
 function evaluate_error(
-    ωk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     bcf::Function, 
-    Tc::Real, 
+    T_max::Real, 
     N_t::Int)
 
-    t = range(0, Tc, length=N_t)
-    evaluate_error(ωk, gk, bcf, t)
+    t = range(0, T_max, length=N_t)
+    evaluate_error(ω, g, bcf, t)
 end
 
 function evaluate_error(
-    ωk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     bcf::Function, 
     t::AbstractVector{<:Real})
 
-    evaluate_error(ωk, gk, bcf.(t), t)
+    evaluate_error(ω, g, bcf.(t), t)
 end
 
 function evaluate_error(
-    ωk::AbstractVector{Float64}, 
-    gk::AbstractVector{<:Number}, 
+    ω::AbstractVector{Float64}, 
+    g::AbstractVector{<:Number}, 
     reference::AbstractVector{<:Number}, 
     t::AbstractVector{<:Real})
 
-    approx = bcf_approx.(t, Ref(ωk*icm2ifs), Ref(gk*icm2ifs^2.0))
+    approx = bcf_approx.(t, Ref(ω), Ref(g))
     evaluate_error(approx, reference, t)
-end
-
-function evaluate_error(
-    ak::AbstractVector{ComplexF64}, 
-    ck::AbstractVector{ComplexF64}, 
-    bcf::Function, 
-    Tc::Real, 
-    N_t::Int)
-
-    t = range(0, Tc, length=N_t)
-    reference = bcf.(t)
-    approx = bcf_approx.(t, Ref(ak*icm2ifs), Ref(ck*icm2ifs^2.0))
-    error = approx - reference
-    
-    # Compute the normalized errors.
-    norm_val = abs(bcf(0.0))
-    normalized_max_error = maximum(abs.(error)) / norm_val
-    normalized_avg_error = sum(abs.(error)) / (norm_val * N_t)
-    
-    println("Normalized maximum error: ", normalized_max_error)
-    println("Normalized mean absolute error: ", normalized_avg_error)
 end
 
 function evaluate_error(

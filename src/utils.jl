@@ -81,6 +81,34 @@ function linsys_weight(cc::AbstractVector{<:Complex{<:Real}}, idx::Vector{Int}, 
 end
 
 # Calculate the sum of the exponential function.
-function bcf_approx(t::Float64, a::AbstractVector{Float64}, c::AbstractVector{<:Number}) :: ComplexF64
-    return sum(c .* exp.(-im .* a .* t) ./ 2.0)
+function bcf_approx(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{<:Number}) :: ComplexF64
+    ω = ω .* icm2ifs
+    g = g .* icm2ifs
+    return sum(g.^2.0 .* exp.(-im .* ω .* t) ./ 2.0)
+end
+
+function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename::String) 
+    open(filename, "w") do io
+        write(io, " "^4 * "Frequencies" * " "^10 * "Coefficients\n")
+        write(io, "-"^42 * "\n")  
+        
+        for (ω, g) in zip(freq, coeff)
+            write(io, @sprintf("%0.12e    %0.12e\n", 
+                               ω, g))
+        end
+    end
+end
+
+function mylawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
+    x1 = setdiff(x, r.nodes)
+    ⍺, β = lawson(x1, f.(x1), r.nodes, r.values, r.weights, nsteps)
+    return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
+end
+
+function mylawson(x::Vector{<:Real}, f::Vector{<:Real}, r::Barycentric, nsteps::Integer)
+    idx = findall(xi -> !(xi in r.nodes), x)
+    x1 = x[idx]
+    f1 = f[idx]
+    ⍺, β = lawson(x1, f1, r.nodes, r.values, r.weights, nsteps)
+    return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
 end
