@@ -14,7 +14,7 @@ using QFiND
     T_c = 500.0
     N_t = 1000
     eps = 1e-2
-    rank = 27
+    rank = 30
 
     sdens = BrownianSD(Ω, Γ, λ)
     sbeta = BosonicQNSD(sdens, Temp)
@@ -26,5 +26,27 @@ using QFiND
     freq = res.freq
     coeff = res.coeff
     evaluate_error(freq, coeff, bcf, T_c, N_t)
+
+    Temp = 0.0
+    eps = 1e-12
+    sbeta = BosonicQNSD(sdens, Temp)
+    bcf = BosonicBCF(sdens, Temp, Ω_c)
+    dataset = InitialData(DiscrID(), sbeta, bcf, 0.0, Ω_max, T_c; n_freq=N_w, n_time=N_t)
+
+    res = id_discr(dataset, eps)
+    @test !isnothing(res)
+    freq = res.freq
+    weight = res.weight
+    coeff = res.coeff
+    Er = reorganization_energy(freq, coeff)
+    @test Er ≈ λ
+    println("Reorganization energy: ", Er)
+
+    res = bsdo_discr(sbeta, 1e-15, Ω_max, 1000; n_lanczos=N_w)
+    wk = res.freq
+    gk = res.coeff
+    Er = reorganization_energy(freq, coeff)
+    @test Er ≈ λ
+    println("Reorganization energy: ", Er)
 
 end

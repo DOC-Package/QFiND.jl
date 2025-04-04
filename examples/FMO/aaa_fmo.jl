@@ -11,8 +11,8 @@ col2 = data[:, 2]
 J = Float64.(col2)
 J[J .< 0] .= 0.0 
 
-"AAA started"
-r = aaa(ω, J; tol=1e-14, max_degree=1200, lookahead=200)
+println("AAA started")
+r = aaa(ω, J; tol=1e-12, max_degree=1200, lookahead=200)
 println("degree: ", length(r.nodes))
 err = norm(r.(ω) - J)
 println("error: ", err)

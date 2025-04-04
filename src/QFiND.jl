@@ -25,7 +25,6 @@ include("id_sub.jl")
 include("id.jl")
 include("idc.jl")
 include("svd.jl")
-include("decomp.jl")
 include("evaluate.jl")
 
 using LinearAlgebra

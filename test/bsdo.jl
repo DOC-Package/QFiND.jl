@@ -16,6 +16,20 @@ using QFiND
     N_t = 200
 
     sdens = PowerLawExpSD(s, alpha, gamc)
+
+    sbeta = BosonicQNSD(sdens, Temp)
+    bcf = BosonicBCF(sdens, Temp, Ω_c)
+    res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_w)
+    wk = res.freq
+    gk = res.coeff
+    @test !isnothing(res)
+    evaluate_error(wk, gk, bcf, T_c, N_t)
+
+    Temp = 0.0
+    Ω_min = 0.0
+    Ω_max = 500.0
+    N_w = 2000
+    M_sp = 60
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp, Ω_c)
 
@@ -24,5 +38,4 @@ using QFiND
     gk = res.coeff
     @test !isnothing(res)
     evaluate_error(wk, gk, bcf, T_c, N_t)
-
 end

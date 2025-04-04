@@ -3,9 +3,9 @@ abstract type SpectralDensity <: Function end
 
 # Power-law with exponential cutoff
 struct PowerLawExpSD <: SpectralDensity
-    s    :: Real   # exponent
-    α    :: Real   # coefficient 
-    γ :: Real   # cutoff frequency
+    s :: Float64   # exponent
+    α :: Float64   # coefficient 
+    γ :: Float64   # cutoff frequency
 end
 
 # Tannor-Meyer
@@ -14,6 +14,7 @@ struct TannorMeyerSD <: SpectralDensity
     Γ :: Vector{Float64}  # vector of widths
     λ :: Vector{Float64}  # vector of intensities
 end
+TannorMeyerSD(Ω::Real, Γ::Real, λ::Real) = TannorMeyerSD([Float64(Ω)], [Float64(Γ)], [Float64(λ)])
 
 # Brownian oscillator
 struct BrownianSD <: SpectralDensity
@@ -21,6 +22,7 @@ struct BrownianSD <: SpectralDensity
     Γ :: Vector{Float64}  # vector of damping coefficients
     λ :: Vector{Float64}  # vector of coupling strengths
 end
+BrownianSD(Ω::Real, Γ::Real, λ::Real) = BrownianSD([Float64(Ω)], [Float64(Γ)], [Float64(λ)])
 
 struct DrudeSD <: SpectralDensity
     γ :: Float64
@@ -29,6 +31,14 @@ end
 
 struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
+    λ::Float64
+    scale_reorgene::Float64
+end
+AAAfittedSD(bary::Barycentric; lb::Real=0.0, ub::Real=Inf) = AAAfittedSD(bary, reorganization_energy(bary; lb=lb,ub=ub), 1.0)
+function AAAfittedSD(bary::Barycentric, reorgene::Float64; lb::Real=0.0, ub::Real=Inf)
+    rawene = reorganization_energy(bary; lb=lb,ub=ub)
+    scale_reorgene = reorgene / rawene
+    return AAAfittedSD(bary, reorgene, scale_reorgene)
 end
 
 struct RationalSD <: SpectralDensity
@@ -40,6 +50,21 @@ struct WideBandSD <: SpectralDensity
     Γ :: Float64
 end
 
+function reorganization_energy(sd::SpectralDensity; lb::Real=0.0, ub::Real=Inf) :: Float64
+    integrand(ω) = sd(ω) / ω / 2.0
+    E_r, err = quadgk(ω -> integrand(ω), lb, ub; atol=1e-12)
+    return E_r
+end
+
+function reorganization_energy(bary::Barycentric; lb::Real=0.0,       ub::Real=Inf)
+    integrand(ω) = (evaluate(bary, ω)) / ω / 2.0
+    E_r, err = quadgk(ω -> integrand(ω), lb, ub; atol=1e-12)
+    return E_r
+end
+
+function reorganization_energy(freq::Vector{Float64}, coeff::Vector{Float64})
+    return sum(coeff ./ freq) / 2.0
+end
 
 """
     (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
@@ -52,7 +77,7 @@ function (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
     s = specdens.s
     α = specdens.α
     γ = specdens.γ * scale
-    return sgn * π * α * γ^(1.0 - s) * ω^s * exp(-ω / γ)
+    return sgn * 2.0 * α * γ^(1.0 - s) * ω^s * exp(-ω / γ)
 end
 
 
@@ -69,7 +94,7 @@ function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
     λ = specdens.λ .* scale
     res = 0.0
     for i in eachindex(specdens.Ω)
-        p    = 4.0 * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
+        p    = 8.0 / π * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
         deno = ((ω + specdens.Ω[i])^2 + specdens.Γ[i]^2) * ((ω - specdens.Ω[i])^2 + specdens.Γ[i]^2)
         res += p * ω / deno
     end
@@ -109,14 +134,14 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     λ = specdens.λ .* scale
     res = 0.0
     for i in eachindex(Ω)
-        p    = 2.0 * Γ[i] * λ[i] * Ω[i]^2
+        p    = 4.0 / π * Γ[i] * λ[i] * Ω[i]^2
         deno = (ω^2 - Ω[i]^2)^2 + (Γ[i]^2 * ω^2)
         res += p * ω / deno
     end
     return sgn * res
 end
 
-BrownianSD(Ω::Real, Γ::Real, λ::Real) = BrownianSD([Float64(Ω)], [Float64(Γ)], [Float64(λ)])
+
 
 function sd_nodes(sd::BrownianSD)
     poles = ComplexF64[]
@@ -149,8 +174,9 @@ function (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
     ω = abs(ω) / scale
     res = evaluate(specdens.bary, ω)
-    return sgn * scale * res
+    return sgn * scale * res * specdens.scale_reorgene
 end
+
 
 function (specdens::RationalSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
@@ -206,21 +232,21 @@ end
 
 
 function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
-    β = ħ * 1e15 / (kb * b.Temp)
     if b.Temp == 0.0
-        return (b.specdens)(ω; scale=scale) / π
+        return (b.specdens)(ω; scale=scale)
     else
-        factor = (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / (2π)
+        β = ħ * 1e15 / (kb * b.Temp)
+        factor = (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
         return (b.specdens)(ω; scale=scale) * factor
     end
 end
 
 function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64
-    β = ħ * 1e15 / (kb * b.Temp)
     if b.Temp == 0.0
-        return (b.specdens)(ω; scale=scale) / π
+        return (b.specdens)(ω; scale=scale) 
     else
-        factor = 2.0 / (β * ω * icm2ifs / scale) / (2π)
+        β = ħ * 1e15 / (kb * b.Temp)
+        factor = 2.0 / (β * ω * icm2ifs / scale) / 2.0
         return (b.specdens)(ω; scale=scale) * factor
     end
 end
@@ -239,11 +265,11 @@ struct FermionicQNSD_Minus <: FermionicQNSD
 end
 
 function (f::FermionicQNSD_Plus)(ω::Float64; scale::Float64=1.0) :: Float64
-    β = ħ * 1e15 / (kb * f.Temp)
     if b.Temp == 0.0
-        return (b.specdens)(ω; scale=scale) / π
+        return (b.specdens)(ω; scale=scale) 
     else
-        factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / (2π)
+        β = ħ * 1e15 / (kb * b.Temp)
+        factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / 2.0
         return (b.specdens)(ω; scale=scale) * factor
     end
 end
