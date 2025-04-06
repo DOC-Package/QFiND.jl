@@ -16,4 +16,4 @@ r = open("r_atcry.bin", "r") do io
     deserialize(io)
 end
 
-plot_qnsd(ω, r.(ω), J, "aaa_atcry.png")
+plot_qnsd(ω, r.(ω), J, "./figure/aaa_atcry.png")

@@ -8,7 +8,7 @@ Temp = 300.0
 Ω_c = 500.0
 Ω_min = -400.0
 Ω_max = 500.0
-N_w = 2000
+N_ω = 2000
 T_max = 1500.0
 N_t = 2000
 M_sp = 100
@@ -26,14 +26,14 @@ println("Reorganization energy: ", E0)
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)
 
-res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_w)
+res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_ω)
 freq = res.freq
 coeff = res.coeff
 
 t = collect(range(0.0, T_max, length=N_t))
 bcf_t = bcf.(t)
 evaluate_error(freq, coeff, bcf_t, t)
-plot_bcf(freq, coeff, bcf_t, t, "bcf_fmo_bsdo.png")
+plot_bcf(freq, coeff, bcf_t, t, "./figure/bcf_fmo_bsdo.png")
 
 E_reorg = reorganization_energy(freq, coeff)
 println("Effective reorganization energy: ", E_reorg)

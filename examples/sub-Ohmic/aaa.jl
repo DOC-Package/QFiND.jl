@@ -4,7 +4,7 @@ using LinearAlgebra
 using RationalFunctionApproximation
   
 # spectral density
-s = 1.0
+s = 0.25
 alpha = 50.0
 gamc = 50.0
 Temp = 0.0
@@ -21,9 +21,8 @@ r = aaa(ω, J; tol=1e-5, max_degree=100, lookahead=50)
 println("degree: ", length(r.nodes))
 err = norm(r.(ω) - J)
 println("error: ", err)
-#r = mylawson(ω, J, r, 10)
 
-r = mylawson(ω, J, r, 20)
+r = mylawson(ω, J, r, 10)
 err = norm(r.(ω) - J)
 println("error: ", err)
 #

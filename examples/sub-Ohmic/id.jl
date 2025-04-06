@@ -3,19 +3,21 @@ using Test
 using QFiND
 
 # spectral density
-s = 1.0
-alpha = 50.0
+s = 0.25
 gamc = 50.0
-sdens = PowerLawExpSD(s, gamc; alpha=alpha)
+lam = 50.0
+sdens = PowerLawExpSD(s, gamc; reorgene=lam)
+er = reorganization_energy(sdens)
+println("Reorganization energy: ", er)
 
 # 300 K
-Temp = 300.0
+Temp = 50.0
 Ω_min = -400.0
 Ω_max = 400.0
 N_ω = 2000
-T_max = 500.0
+T_max = 1000.0
 N_t = 200
-eps = 1e-3
+eps = 1e-5
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp)
@@ -30,7 +32,7 @@ save_freq_coeff(ω, g, "freq_coeff_id.txt")
 # 0 K
 Temp = 0.0
 Ω_min = 0.0
-Ω_max = 600.0
+Ω_max = 700.0
 N_ω = 2000
 T_max = 500.0
 N_t = 200
@@ -44,6 +46,7 @@ res = id_discr(dataset, eps)
 g = res.coeff
 evaluate_error(ω, g, bcf, T_max, N_t)
 plot_bcf(ω, g, bcf, dataset.time, "bcf_0K_id.png")
+save_freq_coeff(ω, g, "freq_coeff_0K_id.txt")
 
 E_reorg = reorganization_energy(ω, g)
 println("Effective reorganization energy: ", E_reorg)

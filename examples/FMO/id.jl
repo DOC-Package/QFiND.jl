@@ -9,7 +9,7 @@ Temp = 300.0
 Ω_c = 495.0
 Ω_min = -500.0
 Ω_max = 500.0
-N_w = 2000
+N_ω = 2000
 T_c = 1500.0
 N_t = 2000
 eps = 6e-2
@@ -24,11 +24,13 @@ println("Reorganization energy: ", sdens.reorgene)
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)
-dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
+dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_ω, n_time=N_t)
 
 res = id_discr(dataset, eps)
-freq = res.freq
-coeff = res.coeff
-evaluate_error(freq, coeff, dataset.bcf, dataset.time)
-plot_bcf(freq, coeff, dataset.bcf, dataset.time, "bcf_fmo_id.png")
-save_freq_coeff(freq, coeff, "fmo_id.txt")
+ω = res.freq
+g = res.coeff
+evaluate_error(ω, g, dataset.bcf, dataset.time)
+plot_bcf(ω, g, dataset.bcf, dataset.time, "./figure/bcf_fmo_id.png")
+save_freq_coeff(ω, g, "fmo_id.txt")
+
+plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/fmo_id.png")

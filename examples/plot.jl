@@ -2,13 +2,15 @@ using QFiND
 using CairoMakie
 using LaTeXStrings 
 
-function plot_qnsd(
-    ω::AbstractVector{<:Real},
-    approx::AbstractVector{<:Real},
-    reference::AbstractVector{<:Real},
+function plot_freq_coeff(
+    sbeta::Function,
+    ωk::AbstractVector{Float64}, 
+    gk::AbstractVector{Float64}, 
+    Ω_min::Real, Ω_max::Real, N_freq::Int,
     filename::String)
 
-    error = (approx - reference) ./ maximum(reference)
+    ω = range(Ω_min, Ω_max, length=N_freq) |> collect
+    S = sbeta.(ω)
 
     ls1    = 20      # label font size
     ls2    = 15      # tick label font size
@@ -22,32 +24,27 @@ function plot_qnsd(
 
     ax1 = Axis(fig[1, 1],
         xlabel = "",
-        ylabel = L"J(\omega)",
-        xlabelsize = ls2,
-        ylabelsize = ls2
+        ylabel = L"S_\beta(\omega)",
+        xlabelsize = ls1,
+        ylabelsize = ls1,
+        xticks = range(Ω_min, Ω_max, length = 5)
     )
     ax2 = Axis(fig[2, 1],
-        xlabel = L"\omega (\mathrm{cm}^{-1})",
-        ylabel = L"\delta J(\omega)",
-        xlabelsize = ls2,
-        ylabelsize = ls2
+        xlabel = L"\omega_k (\mathrm{cm}^{-1})",
+        ylabel = L"g_k^2",
+        xlabelsize = ls1,
+        ylabelsize = ls1,
+        xticks = range(Ω_min, Ω_max, length = 5)
     )
-    lines!(ax1, ω, approx,
-        label = L"\text{Approximation}",
+    lines!(ax1, ω, S,
         color = color1,
-        linewidth = lw1
-    )
-    lines!(ax1, ω, reference,
-        label = L"\text{Reference}",
-        color = color3,
-        linestyle = :dash,
         linewidth = lw2
     )
-    lines!(ax2, ω, error,
-        color = color1,
-        linewidth = lw1
-    )
-    axislegend(ax1, position = :rt, labelsize = ls2)
+    barplot!(ax2, ωk, gk.^2.0, color = color3)
+    xlims!(ax1, (Ω_min, Ω_max))
+    ylims!(ax1, (0, nothing))
+    xlims!(ax2, (Ω_min, Ω_max))
+    ylims!(ax2, (0, nothing))
     save(filename, fig)
     return fig
 end

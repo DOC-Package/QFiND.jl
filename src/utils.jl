@@ -89,8 +89,9 @@ end
 
 function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename::String) 
     open(filename, "w") do io
+        write(io, "-"^41 * "\n") 
         write(io, " "^4 * "Frequencies" * " "^10 * "Coefficients\n")
-        write(io, "-"^42 * "\n")  
+        write(io, "-"^41 * "\n")  
         
         for (ω, g) in zip(freq, coeff)
             write(io, @sprintf("%0.12e    %0.12e\n", 
@@ -99,13 +100,13 @@ function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename
     end
 end
 
-function mylawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
+function lawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
     x1 = setdiff(x, r.nodes)
     ⍺, β = lawson(x1, f.(x1), r.nodes, r.values, r.weights, nsteps)
     return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
 end
 
-function mylawson(x::Vector{<:Real}, f::Vector{<:Real}, r::Barycentric, nsteps::Integer)
+function lawson(x::Vector{<:Real}, f::Vector{<:Real}, r::Barycentric, nsteps::Integer)
     idx = findall(xi -> !(xi in r.nodes), x)
     x1 = x[idx]
     f1 = f[idx]
