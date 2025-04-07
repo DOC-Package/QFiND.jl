@@ -16,7 +16,7 @@ using QFiND
     eps = 1e-4
     rank = 27
 
-    sdens = PowerLawExpSD(s, alpha, gamc)
+    sdens = PowerLawExpSD(s, gamc; alpha=alpha)
     sbeta = BosonicQNSD(sdens, Temp)
     bcf = BosonicBCF(sdens, Temp)
     dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
