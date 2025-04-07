@@ -9,7 +9,7 @@ QFiND (Quantum Finite-temperature Noise Discretizer and Decomposer) provides rou
 
 $$
 \begin{aligned}
-C(t)&=\frac{1}{4} \int_{-\infty}^{\infty} \mathrm{d}\omega J(\omega)\left[\mathrm{coth}\left(\frac{\beta \omega}{2}\right)+1\right] \mathrm{e}^{-i \omega t}\\
+C(t)&=\frac{1}{2\pi} \int_{-\infty}^{\infty} \mathrm{d}\omega J(\omega)\left[\mathrm{coth}\left(\frac{\beta \omega}{2}\right)+1\right] \mathrm{e}^{-i \omega t}\\
 &\approx \sum_{k=1}^M g_k^2 \mathrm{e}^{-i\omega_k t}
 \end{aligned}
 $$
@@ -21,14 +21,22 @@ The code allows for the estimation of frequencies and coefficients in the system
 
 ## Installation
 
-## Example Usage
-See `./examples`.
+```julia
+    julia> using Pkg
+
+    julia> Pkg.add(; url="https://github.com/DOC-package/QFiND.jl")
+```
+
+## Simple usage
+
+For other usage, see `./examples`.
 
 
 ## Cite `QFiND`
+
 If you find the framework useful in your research, we would be grateful if you could cite our publications:
 - H. Takahashi and R. Borrelli, J. Chem. Phys. 161, 151101 (2024). (https://doi.org/10.1063/5.0232232) 
-- H. Takahashi and R. Borrelli, arXiv:2412.13793. (https://doi.org/10.48550/arXiv.2412.13793)
+- H. Takahashi and R. Borrelli, J. Chem. Theory Comput. 21, 2206–2218 (2025). (https://doi.org/10.1021/acs.jctc.4c01728)
 
 Here are the bibtex entries:
 ```bib
@@ -45,19 +53,21 @@ Here are the bibtex entries:
   doi = {10.1063/5.0232232}
 }
 
-@misc{TakahashiBorrelli2024a,
+@article{TakahashiBorrelli2025JCTC,
   title = {Discretization of {{Structured Bosonic Environments}} at {{Finite Temperature}} by {{Interpolative Decomposition}}: {{Theory}} and {{Application}}},
   shorttitle = {Discretization of {{Structured Bosonic Environments}} at {{Finite Temperature}} by {{Interpolative Decomposition}}},
   author = {Takahashi, Hideaki and Borrelli, Raffaele},
-  year = {2024},
-  month = dec,
-  number = {arXiv:2412.13793},
-  eprint = {2412.13793},
-  primaryclass = {quant-ph},
-  publisher = {arXiv},
-  doi = {10.48550/arXiv.2412.13793},
-  archiveprefix = {arXiv}
+  year = {2025},
+  month = mar,
+  journal = {Journal of Chemical Theory and Computation},
+  volume = {21},
+  number = {5},
+  pages = {2206--2218},
+  publisher = {American Chemical Society},
+  issn = {1549-9618},
+  doi = {10.1021/acs.jctc.4c01728}
 }
+
 ```
 
 

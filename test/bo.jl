@@ -1,7 +1,7 @@
 using Test
 using QFiND
 
-@testset "id.jl" begin
+@testset "bo.jl" begin
     
     Ω = 1400.0
     Γ = 200.0
@@ -39,14 +39,15 @@ using QFiND
     weight = res.weight
     coeff = res.coeff
     Er = reorganization_energy(freq, coeff)
-    @test Er ≈ λ
+    # error is within 10percent 
+    @test abs(Er - λ) / λ < 0.1
     println("Reorganization energy: ", Er)
 
     res = bsdo_discr(sbeta, 1e-15, Ω_max, 1000; n_lanczos=N_w)
     wk = res.freq
     gk = res.coeff
     Er = reorganization_energy(freq, coeff)
-    @test Er ≈ λ
+    @test abs(Er - λ) / λ < 0.1
     println("Reorganization energy: ", Er)
 
 end

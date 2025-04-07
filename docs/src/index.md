@@ -4,7 +4,12 @@ CurrentModule = QFiND
 
 # QFiND
 
-Documentation for [QFiND](https://github.com/htkhsh/QFiND.jl).
+Documentation for [QFiND](https://github.com/DOC-Package/QFiND.jl).
+
+# Index
+
+- [Basic Theory](@ref)
+- [Bath Spectral Density Orthogonal](@ref)
 
 ```@index
 ```

@@ -12,7 +12,7 @@ Temp = 300.0
 N_ω = 2000
 T_c = 1500.0
 N_t = 2000
-eps = 6e-2
+eps = 7e-2
 
 r = open("r_fmo.bin", "r") do io
     deserialize(io)

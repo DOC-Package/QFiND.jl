@@ -2,9 +2,10 @@
 Calculate the error between the approximated and exact correlation functions.
 """
 function evaluate_error(
+    t::AbstractVector{<:Real},
     approx::AbstractVector{<:Number},
-    reference::AbstractVector{<:Number}, 
-    t::AbstractVector{<:Real})
+    reference::AbstractVector{<:Number} 
+    )
 
     error = approx - reference    
     # Compute the normalized errors.
@@ -25,26 +26,28 @@ function evaluate_error(
     N_t::Int)
 
     t = range(0, T_max, length=N_t)
-    evaluate_error(ω, g, bcf, t)
+    evaluate_error(ω, g, t, bcf)
 end
 
 function evaluate_error(
     ω::AbstractVector{Float64}, 
     g::AbstractVector{<:Number}, 
-    bcf::Function, 
-    t::AbstractVector{<:Real})
+    t::AbstractVector{<:Real},
+    bcf::Function
+    )
 
-    evaluate_error(ω, g, bcf.(t), t)
+    evaluate_error(ω, g, t, bcf.(t))
 end
 
 function evaluate_error(
     ω::AbstractVector{Float64}, 
     g::AbstractVector{<:Number}, 
-    reference::AbstractVector{<:Number}, 
-    t::AbstractVector{<:Real})
+    t::AbstractVector{<:Real},
+    reference::AbstractVector{<:Number}
+    )
 
     approx = bcf_approx.(t, Ref(ω), Ref(g))
-    evaluate_error(approx, reference, t)
+    evaluate_error(t, approx, reference)
 end
 
 function evaluate_error(
