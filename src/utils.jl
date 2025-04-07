@@ -48,13 +48,13 @@ function create_integrand(sbeta::Vector{<:Real}, t::Vector{<:Real}, ω::Vector{<
     # Fill first N_t rows (real part)
     for i in 1:N_t
         for j in 1:N_ω
-            f[i, j] = sbeta[j] * cos(ω[j] * t[i])
+            f[i, j] = sbeta[j] * cos(ω[j] * t[i]) / π
         end
     end
     # Fill next N_t rows (imaginary part)
     for i in (N_t+1):(2*N_t)
         for j in 1:N_ω
-            f[i, j] = -sbeta[j] * sin(ω[j] * t[i - N_t])
+            f[i, j] = -sbeta[j] * sin(ω[j] * t[i - N_t]) / π
         end
     end
     return f
@@ -66,7 +66,7 @@ function create_integrand_c(sbeta::Vector{<:Real}, t::Vector{<:Real}, ω::Vector
     f = zeros(ComplexF64, N_t, N_ω)
     for i in 1:N_t
         for j in 1:N_ω
-            f[i, j] = sbeta[j] * exp(-1.0im * ω[j] * t[i])
+            f[i, j] = sbeta[j] * exp(-1.0im * ω[j] * t[i]) / π
         end
     end
     return f

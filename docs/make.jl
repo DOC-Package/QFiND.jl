@@ -14,6 +14,10 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Basic Theory" => "theory.md",
+        "ID Discretization" => "id.md",
+        "BSDO Discretization" => "bsdo.md",
+        "Reference" => "reference.md",
     ],
 )
 
