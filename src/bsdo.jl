@@ -124,7 +124,7 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int)
     else
         norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max)
     end
-    gk .*= norm
+    gk .*= norm * 2.0 / π
     gk = sqrt.(gk) 
 
     return (freq = ωk, coeff = gk)

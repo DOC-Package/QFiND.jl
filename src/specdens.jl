@@ -66,13 +66,13 @@ struct WideBandSD <: SpectralDensity
 end
 
 function reorganization_energy(sd::SpectralDensity; lb::Real=0.0, ub::Real=Inf) :: Float64
-    integrand(ω) = sd(ω) / ω / 2.0
+    integrand(ω) = sd(ω) / ω / π
     E_r, err = quadgk(ω -> integrand(ω), lb, ub; atol=1e-12)
     return E_r
 end
 
-function reorganization_energy(bary::Barycentric; lb::Real=0.0,       ub::Real=Inf)
-    integrand(ω) = (evaluate(bary, ω)) / ω / 2.0
+function reorganization_energy(bary::Barycentric; lb::Real=0.0, ub::Real=Inf)
+    integrand(ω) = (evaluate(bary, ω)) / ω / π
     E_r, err = quadgk(ω -> integrand(ω), lb, ub; atol=1e-12)
     return E_r
 end
@@ -92,7 +92,7 @@ function (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
     s = specdens.s
     γ = specdens.γ * scale
     α = specdens.α * scale
-    return sgn * 2.0 * α * γ^(-s) * ω^s * exp(-ω / γ)
+    return sgn * π * α * γ^(-s) * ω^s * exp(-ω / γ)
 end
 
 
@@ -109,7 +109,7 @@ function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
     λ = specdens.λ .* scale
     res = 0.0
     for i in eachindex(specdens.Ω)
-        p    = 8.0 / π * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
+        p    = 4.0 * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
         deno = ((ω + specdens.Ω[i])^2 + specdens.Γ[i]^2) * ((ω - specdens.Ω[i])^2 + specdens.Γ[i]^2)
         res += p * ω / deno
     end
@@ -149,7 +149,7 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     λ = specdens.λ .* scale
     res = 0.0
     for i in eachindex(Ω)
-        p    = 4.0 / π * Γ[i] * λ[i] * Ω[i]^2
+        p    = 2.0 * Γ[i] * λ[i] * Ω[i]^2
         deno = (ω^2 - Ω[i]^2)^2 + (Γ[i]^2 * ω^2)
         res += p * ω / deno
     end
@@ -279,15 +279,6 @@ struct FermionicQNSD_Minus <: FermionicQNSD
     ChemPot :: Float64  
 end
 
-function (f::FermionicQNSD_Plus)(ω::Float64; scale::Float64=1.0) :: Float64
-    if b.Temp == 0.0
-        return (b.specdens)(ω; scale=scale) 
-    else
-        β = ħ * 1e15 / (kb * b.Temp)
-        factor = (1.0 / tanh(0.5 * β * icm2ifs / scale * ω) + 1.0) / 2.0
-        return (b.specdens)(ω; scale=scale) * factor
-    end
-end
 
 
 

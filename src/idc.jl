@@ -19,7 +19,7 @@ function id_discr_c_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comp
     
     # Estimate weights via NNLS
     idx1, D, err = id_time(B, frank, rand)
-    zk, err = linsys_weight(cc, idx1, D)
+    zk, err = linsys_weight(cc, idx1, D ./ 2.0)
     gk = sqrt(zk .* sbeta[idx[1:frank]])
     Nsp, wk, gk = sort_and_rescale(wk, gk)
     

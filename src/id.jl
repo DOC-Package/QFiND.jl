@@ -70,7 +70,7 @@ function id_discr_sub(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Comple
     wk = ω[idx[1:frank]]
     
     # Estimate weights via NNLS
-    zk, err2 = nnls_weight(cc, t, B .* 0.5)
+    zk, err2 = nnls_weight(cc, t, B ./ 2.0)
     gk = sqrt.(zk .* sbeta[idx[1:frank]])
     Nsp, wk, zk, gk = sort_and_rescale(wk, zk, gk)
     

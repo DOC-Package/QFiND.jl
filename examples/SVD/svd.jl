@@ -27,8 +27,8 @@ zk = res.coeff
 Dt = res.Dt
 alpha = Dt * zk
 evaluate_error(U, zk, dataset.bcf)
-plot_bcf(U, zk, dataset.bcf, dataset.time, "bcf_svd.png")
+plot_bcf(dataset.time, U * zk, dataset.bcf,  "bcf_svd.png")
 evaluate_error(U, alpha, dataset.dC)
-plot_bcf(U, alpha, dataset.dC, dataset.time, "bcf_dt_svd.png")
+plot_bcf(dataset.time, U * alpha, dataset.dC, "bcf_dt_svd.png")
 plot_basis_time(U, dataset.time)
 plot_basis_freq(V, dataset.freq ./ icm2ifs)

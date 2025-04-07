@@ -1,4 +1,32 @@
-include("../plot.jl")
+include("../
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+plot.jl")
 using Test
 using QFiND
   
