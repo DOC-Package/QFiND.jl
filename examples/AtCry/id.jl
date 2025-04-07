@@ -20,12 +20,14 @@ end
 
 sdens = AAAfittedSD(r, lam; ub=Ω_c)
 E0 = reorganization_energy(sdens; ub=Ω_c)
-println("Reorganization energy: ", E0 * icm2ev)
+println("Reorganization energy (eV): ", E0 * icm2ev)
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)
+println("Preparing initial data")
 dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
 
+println("ID started")
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff

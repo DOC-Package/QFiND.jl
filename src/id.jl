@@ -104,7 +104,7 @@ function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:
 end
 
 function id_discr(qnsd::Function, bcf::Function, Ω_min::Real, Ω_max::Real, T_max::Real, 
-    N_ω::Integer, N_t::Integer,　eps::Real; rand::Bool=false)
+    N_ω::Integer, N_t::Integer, eps::Real; rand::Bool=false)
     t, ω = equispaced_grid(Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t, scale=icm2ifs)
     sbeta = qnsd.(ω; scale=icm2ifs)
     cc = bcf.(t)

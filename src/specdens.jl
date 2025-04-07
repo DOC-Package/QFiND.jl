@@ -78,7 +78,7 @@ function reorganization_energy(bary::Barycentric; lb::Real=0.0,       ub::Real=I
 end
 
 function reorganization_energy(ω::Vector{Float64}, g::Vector{Float64})
-    return sum(g.^2.0 ./ ω) / 2.0
+    return sum(g.^2.0 ./ abs.(ω)) / 2.0
 end
 
 """

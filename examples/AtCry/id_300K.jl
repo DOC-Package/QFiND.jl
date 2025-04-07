@@ -20,7 +20,7 @@ end
 
 sdens = AAAfittedSD(r, lam; ub=Ω_c)
 E0 = reorganization_energy(sdens; ub=Ω_c)
-println("Reorganization energy: ", E0 * icm2ev)
+println("Reorganization energy (eV): ", E0 * icm2ev)
 
 sbeta = BosonicQNSD(sdens, Temp)
 plot_qnsd(sbeta, Ω_min, Ω_max, N_ω, "./figure/sbeta_atcry_300K.png")
