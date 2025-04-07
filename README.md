@@ -21,11 +21,19 @@ The code allows for the estimation of frequencies and coefficients in the system
 
 ## Installation
 
-## Example Usage
-See `./examples`.
+```julia
+    julia> using Pkg
+
+    julia> Pkg.add(; url="https://github.com/DOC-package/QFiND.jl")
+```
+
+## Simple usage
+
+For other usage, see `./examples`.
 
 
 ## Cite `QFiND`
+
 If you find the framework useful in your research, we would be grateful if you could cite our publications:
 - H. Takahashi and R. Borrelli, J. Chem. Phys. 161, 151101 (2024). (https://doi.org/10.1063/5.0232232) 
 - H. Takahashi and R. Borrelli, J. Chem. Theory Comput. 21, 2206–2218 (2025). (https://doi.org/10.1021/acs.jctc.4c01728)

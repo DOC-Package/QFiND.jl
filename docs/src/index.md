@@ -1,17 +1,19 @@
 ```@meta
-CurrentModule = ExpFit
+CurrentModule = QFiND
 ```
 
-# ExpFit.jl
+# QFiND
 
-[ExpFit.jl](https://github.com/DOC-Package/ExpFit.jl) is a Julia package that provides methods and algorithms for fitting functions or discrete data with a sum of exponentials and for reducing the order of a sum of exponentials.
+Documentation for [QFiND](https://github.com/DOC-Package/QFiND.jl).
 
-## Index
+# Index
 
-- [Exponential Fitting](@ref)
-- [Exponential Model Reduction](@ref)
-- [Reference](@ref)
+- [Basic Theory](@ref)
+- [Bath Spectral Density Orthogonal](@ref)
 
+```@index
+```
 
-
-
+```@autodocs
+Modules = [QFiND]
+```
