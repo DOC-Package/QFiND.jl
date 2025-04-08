@@ -125,5 +125,3 @@ where
 
 is the normalization factor.
 
-## `bsdo_discr`
-

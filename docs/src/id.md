@@ -152,5 +152,3 @@ Since the NNLS procedure may result in some $z_k$ being zero, in the general cas
 
 The overall accuracy of the method is determined by the accuracy of the ID and the NNLS. Note that ID induces a pivoting of the columns of $\mathbf{f}$; therefore, the $M$ frequencies $\{\omega_k\}$ do not correspond to the first $M$ frequencies of the initial discretization grid, but rather form a special subset of it.
 
-## `id_discr`
-

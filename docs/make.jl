@@ -17,6 +17,7 @@ makedocs(;
         "Basic Theory" => "theory.md",
         "ID Discretization" => "id.md",
         "BSDO Discretization" => "bsdo.md",
+        "Work Flow" => "workflow.md",
         "Reference" => "reference.md",
     ],
 )
