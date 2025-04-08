@@ -29,8 +29,11 @@ dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_ω, n
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff
-evaluate_error(ω, g, dataset.bcf, dataset.time)
-plot_bcf(ω, g, dataset.bcf, dataset.time, "./figure/bcf_fmo_id.png")
+t = dataset.time
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, dataset.bcf)
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_fmo_id.png")
+
 save_freq_coeff(ω, g, "fmo_id.txt")
 
 plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/fmo_id.png")

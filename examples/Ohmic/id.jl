@@ -23,8 +23,10 @@ dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω,
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff
-evaluate_error(ω, g, bcf, T_max, N_t)
-plot_bcf(ω, g, bcf, dataset.time, "bcf_id.png")
+t = dataset.time
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, dataset.bcf)
+plot_bcf(t, approx, dataset.bcf, "bcf_id.png")
 save_freq_coeff(ω, g, "freq_coeff_id.txt")
 
 # 0 K
@@ -42,8 +44,11 @@ dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω,
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff
-evaluate_error(ω, g, bcf, T_max, N_t)
-plot_bcf(ω, g, bcf, dataset.time, "bcf_0K_id.png")
+t = dataset.time
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+save_freq_coeff(ω, g, "freq_coeff_0K_id.txt")
+evaluate_error(t, approx, dataset.bcf)
+plot_bcf(t, approx, dataset.bcf, "bcf_0K_id.png")
 
 E_reorg = reorganization_energy(ω, g)
 println("Effective reorganization energy: ", E_reorg)

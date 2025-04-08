@@ -1,33 +1,4 @@
-include("../
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-plot.jl")
-using Test
+include("../plot.jl")
 using QFiND
   
 # spectral density
@@ -52,9 +23,11 @@ bcf = BosonicBCF(sdens, Temp)
 res = bsdo_discr(sbeta, Ω_min, Ω_max, degree)
 ω = res.freq
 g = res.coeff
-@test !isnothing(res)
-evaluate_error(ω, g, bcf, T_max, N_t)
-plot_bcf(ω, g, bcf, T_max, N_t, "bcf_bsdo.png")
+t = collect(range(0.0, T_max, length=N_t))
+reference = bcf.(t)
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, reference)
+plot_bcf(t, approx, reference, "bcf_bsdo.png")
 save_freq_coeff(ω, g, "freq_coeff_bsdo.txt")
 
 # 0K 
@@ -72,9 +45,11 @@ bcf = BosonicBCF(sdens, Temp)
 res = bsdo_discr(sbeta, Ω_min, Ω_max, degree)
 ω = res.freq
 g = res.coeff
-@test !isnothing(res)
-evaluate_error(ω, g, bcf, T_max, N_t)
-plot_bcf(ω, g, bcf, T_max, N_t, "bcf_0K_bsdo.png")
+t = collect(range(0.0, T_max, length=N_t))
+reference = bcf.(t)
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, reference)
+plot_bcf(t, approx, reference, "bcf_0K_bsdo.png")
 save_freq_coeff(ω, g, "freq_coeff_0K_bsdo.txt")
 
 E_reorg = reorganization_energy(ω, g)

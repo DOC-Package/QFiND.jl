@@ -32,9 +32,11 @@ g = res.coeff
 T_max = 1500.0
 N_t = 2000
 t = collect(range(0.0, T_max, length=N_t))
-bcf_t = bcf.(t)
-evaluate_error(ω, g, bcf_t, t)
-plot_bcf(ω, g, bcf_t, t, "./figure/bcf_fmo_bsdo_0K.png")
+reference = bcf.(t)
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, reference)
+plot_bcf(t, approx, reference, "./figure/bcf_fmo_bsdo_0K.png")
+
 
 E_reorg = reorganization_energy(ω, g)
 println("Effective reorganization energy: ", E_reorg)

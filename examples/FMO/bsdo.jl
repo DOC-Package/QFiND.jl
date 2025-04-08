@@ -32,9 +32,9 @@ g = res.coeff
 
 t = collect(range(0.0, T_max, length=N_t))
 bcf_t = bcf.(t)
-evaluate_error(ω, g, bcf_t, t)
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, dataset.bcf)
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_fmo_bsdo.png")
 save_freq_coeff(ω, g, "fmo_bsdo.txt")
-
-plot_bcf(ω, g, bcf_t, t, "./figure/bcf_fmo_bsdo.png")
 plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/fmo_bsdo.png")
 

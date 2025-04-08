@@ -31,8 +31,10 @@ println("ID started")
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff
-evaluate_error(ω, g, dataset.bcf, dataset.time)
-plot_bcf(ω, g, dataset.bcf, dataset.time, "./figure/bcf_atcry_id.png")
+t = dataset.time
+approx = bcf_approx.(t, Ref(ω), Ref(g))
+evaluate_error(t, approx, dataset.bcf)
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_atcry_id_300K.png")
 
 E_reorg = reorganization_energy(ω, g)
 println("Effective reorganization energy: ", E_reorg * icm2ev)
