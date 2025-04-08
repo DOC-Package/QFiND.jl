@@ -10,14 +10,12 @@ QFiND (Quantum Finite-temperature Noise Discretizer and Decomposer) provides rou
 $$
 \begin{aligned}
 C(t)&=\frac{1}{2\pi} \int_{-\infty}^{\infty} \mathrm{d}\omega J(\omega)\left[\mathrm{coth}\left(\frac{\beta \omega}{2}\right)+1\right] \mathrm{e}^{-i \omega t}\\
-&\approx \sum_{k=1}^M g_k^2 \mathrm{e}^{-i\omega_k t}
+&\approx \sum_{k=1}^M \frac{1}{2} g_k^2 \mathrm{e}^{-i\omega_k t}
 \end{aligned}
 $$
 
 where $`\omega_k,g_k \in ℝ \backslash \{0\}`$.
 The code allows for the estimation of frequencies and coefficients in the system plus bosonic bath model using Interpolative Decomposition (ID) and Non-negative Least Squares (NNLS). 
-
-## Documentation
 
 ## Installation
 
@@ -29,7 +27,11 @@ The code allows for the estimation of frequencies and coefficients in the system
 
 ## Simple usage
 
-For other usage, see `./examples`.
+Please see `./examples`.
+
+## Documentation
+
+For more details, please refer to [the documentation](https://doc-package.github.io/QFiND.jl/).
 
 
 ## Cite `QFiND`
