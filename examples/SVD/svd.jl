@@ -9,9 +9,9 @@ Temp = 300.0
 Ω_min = -500.0
 Ω_max = 500.0
 N_w = 10000
-T_c = 1000.0
-N_t = 200
-eps = 1e-4
+T_c = 4000.0
+N_t = 800
+eps = 2e-2
 rank = 0
 
 sdens = PowerLawExpSD(s, gamc; alpha=alpha)

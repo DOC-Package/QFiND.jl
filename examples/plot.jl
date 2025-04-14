@@ -40,7 +40,7 @@ function plot_freq_coeff(
         color = color1,
         linewidth = lw2
     )
-    barplot!(ax2, ωk, gk.^2.0, color = color3)
+    barplot!(ax2, ωk, gk.^2.0, color = color3, width = 5)
     xlims!(ax1, (Ω_min, Ω_max))
     ylims!(ax1, (0, nothing))
     xlims!(ax2, (Ω_min, Ω_max))

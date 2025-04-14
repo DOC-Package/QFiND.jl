@@ -89,13 +89,24 @@ end
 
 function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename::String) 
     open(filename, "w") do io
-        write(io, "-"^41 * "\n") 
-        write(io, " "^4 * "Frequencies" * " "^10 * "Coefficients\n")
-        write(io, "-"^41 * "\n")  
+        write(io, "="^46 * "\n") 
+        write(io, " "^1 * "Frequencies [cm^-1]" * " "^5 * "Coefficients [cm^-1]\n")
+        write(io, "="^46 * "\n")  
         
         for (ω, g) in zip(freq, coeff)
-            write(io, @sprintf("%0.12e    %0.12e\n", 
+            write(io, @sprintf("%0.12e      %0.12e\n", 
                                ω, g))
+        end
+    end
+end
+
+function save_expon_coeff_union(expon::Vector{ComplexF64}, coeff::Vector{ComplexF64}, filename::String)
+    open(filename, "w") do io
+        for (c1, c2) in zip(coeff, expon)
+            write(io, @sprintf("%0.12e  %0.12e  %0.12e  %0.12e  %0.12e  %0.12e\n", 
+                               real(c1), imag(c1), 0.0, 0.0, real(c2), imag(c2)))
+            write(io, @sprintf("%0.12e  %0.12e  %0.12e  %0.12e  %0.12e  %0.12e\n", 
+                               0.0, 0.0, real(c1), -imag(c1), real(c2), -imag(c2)))
         end
     end
 end
@@ -113,3 +124,4 @@ function lawson(x::Vector{<:Real}, f::Vector{<:Real}, r::Barycentric, nsteps::In
     ⍺, β = lawson(x1, f1, r.nodes, r.values, r.weights, nsteps)
     return Barycentric(r.nodes, ⍺ ./ β, β, ⍺)
 end
+

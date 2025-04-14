@@ -1,11 +1,11 @@
-# QFiND
+# QFiND.jl
 
 <!--![Static Badge](https://img.shields.io/badge/Version-v0.1.0-brightgreen)!-->
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://doc-package.github.io/QFiND.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://doc-package.github.io/QFiND.jl/dev/)
 [![Build Status](https://github.com/DOC-Package/QFiND.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/DOC-Package/QFiND.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
-QFiND (Quantum Finite-temperature Noise Discretizer and Decomposer) provides routines for constructing an effective discrete representation of a system-bath model. In other words, this codes provides an approximation of the bath correlation function $C(t)$ for a given spectral density $J(\omega)$
+QFiND.jl provides routines for constructing an effective discrete representation of a system-bath model. In other words, this codes provides an approximation of the bath correlation function $C(t)$ for a given spectral density $J(\omega)$
 
 $$
 \begin{aligned}
@@ -15,7 +15,7 @@ C(t)&=\frac{1}{2\pi} \int_{-\infty}^{\infty} \mathrm{d}\omega J(\omega)\left[\ma
 $$
 
 where $`\omega_k,g_k \in ℝ \backslash \{0\}`$.
-The code allows for the estimation of frequencies and coefficients in the system plus bosonic bath model.
+The code allows for the estimation of frequencies and coefficients in the system plus bath model.
 
 ## Installation
 
