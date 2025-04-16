@@ -6,18 +6,17 @@ using QFiND
 λ = 50.0
 Temp = 300.0
 Ω_min = -600.0
-Ω_max = 800.0
+Ω_max = 1100.0
 N_ω = 2000
 T_max = 200.0
 N_t = 400
-eps = 1e-3
+eps = 1e-5
 
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp)
 dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
 res = id_discr(dataset, eps)
-
 ω = res.freq
 g = res.coeff
 t = dataset.time

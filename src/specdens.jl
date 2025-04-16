@@ -268,7 +268,7 @@ function ThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float6
     g_t = -g * (1.0 / tanh(-0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
     # Define the list
     freq = [-ω, ω]
-    coeff = [g_t, g_p]
+    coeff = [sqrt(g_t), sqrt(g_p)]
     return freq, coeff
 end
 
