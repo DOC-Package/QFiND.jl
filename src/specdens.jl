@@ -44,6 +44,12 @@ struct DrudeSD <: SpectralDensity
     λ :: Float64
 end
 
+struct DiscreteSD <: SpectralDensity
+    freq :: Vector{Float64}
+    weight :: Vector{Float64}
+end
+DiscreteSD(ω::Real, g::Real) = DiscreteSD([Float64(ω)], [Float64(g)])
+
 struct AAAfittedSD <: SpectralDensity
     bary::Barycentric
     reorgene::Float64
@@ -254,6 +260,16 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
         factor = (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
         return (b.specdens)(ω; scale=scale) * factor
     end
+end
+
+function ThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0)
+    β = ħ * 1e15 / (kb * Temp)
+    g_p = g * (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
+    g_t = -g * (1.0 / tanh(-0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
+    # Define the list
+    freq = [-ω, ω]
+    coeff = [g_t, g_p]
+    return freq, coeff
 end
 
 function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64

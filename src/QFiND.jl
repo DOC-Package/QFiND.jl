@@ -5,7 +5,7 @@ export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error, save_fr
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD
-export sd_nodes, sd_weights
+export sd_nodes, sd_weights, ThermalBogoliubov
 export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_HighT, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
