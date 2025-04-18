@@ -262,14 +262,25 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
     end
 end
 
-function ThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0)
+ThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = ThermalBogoliubov([Float64(ω)], [Float64(g)], Temp; scale=scale)
+function ThermalBogoliubov(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
     β = ħ * 1e15 / (kb * Temp)
-    g_p = g * (1.0 / tanh(0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
-    g_t = -g * (1.0 / tanh(-0.5 * β * ω * icm2ifs / scale) + 1.0) / 2.0
-    # Define the list
-    freq = [-ω, ω]
-    coeff = [sqrt(g_t), sqrt(g_p)]
-    return freq, coeff
+    g_p = g .* (1.0 ./ tanh.(0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
+    g_t = -g .* (1.0 ./ tanh.(-0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
+    freq = vcat(-ω, ω)
+    coeff = vcat(sqrt.(g_t), sqrt.(g_p))
+    perm = sortperm(freq)
+    return freq[perm], coeff[perm]
+end
+
+BosonicQNSD_Discrete(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = BosonicQNSD_Discrete([Float64(ω)], [Float64(g)], Temp; scale=scale)
+function BosonicQNSD_Discrete(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
+    β = ħ * 1e15 / (kb * Temp)
+    g_p = g .* (1.0 ./ tanh.(0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
+    g_t = -g .* (1.0 ./ tanh.(-0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
+    expon = vcat(ω, -ω) .* (-1.0im)
+    coeff = vcat(0.5 .* g_p, 0.5 .* g_t) .* (1.0+0.0im)
+    return expon, coeff
 end
 
 function (b::BosonicQNSD_HighT)(ω::Float64; scale::Float64=1.0) :: Float64
