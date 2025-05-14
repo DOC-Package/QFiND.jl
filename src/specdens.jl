@@ -262,8 +262,8 @@ function (b::BosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
     end
 end
 
-ThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = ThermalBogoliubov([Float64(ω)], [Float64(g)], Temp; scale=scale)
-function ThermalBogoliubov(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
+BosonicThermalBogoliubov(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = BosonicThermalBogoliubov([Float64(ω)], [Float64(g)], Temp; scale=scale)
+function BosonicThermalBogoliubov(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
     β = ħ * 1e15 / (kb * Temp)
     g_p = g .* (1.0 ./ tanh.(0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
     g_t = -g .* (1.0 ./ tanh.(-0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
