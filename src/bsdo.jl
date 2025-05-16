@@ -138,3 +138,7 @@ function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, degree::Int; n_
 
     return bsdo_discr(sbeta, ω, degree)
 end
+
+function bsdo_discr(dataset::InitialDataSetBSDO, degree::Int)
+    return bsdo_discr(dataset.qnsd, dataset.freq, degree)
+end

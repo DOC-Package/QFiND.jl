@@ -25,16 +25,17 @@ println("Reorganization energy: ", E0)
 
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp, Ω_c)
+dataset = InitialData(DiscrBSDO(), sbeta, Ω_min, Ω_max; n_lanczos=N_ω)
 
-res = bsdo_discr(sbeta, Ω_min, Ω_max, M_sp; n_lanczos=N_ω)
+res = bsdo_discr(dataset, M_sp)
 ω = res.freq
 g = res.coeff
 
 t = collect(range(0.0, T_max, length=N_t))
 bcf_t = bcf.(t)
 approx = bcf_approx.(t, Ref(ω), Ref(g))
-evaluate_error(t, approx, dataset.bcf)
-plot_bcf(t, approx, dataset.bcf, "./figure/bcf_fmo_bsdo.png")
+evaluate_error(t, approx, bcf_t)
+plot_bcf(t, approx, bcf_t, "./figure/bcf_fmo_bsdo.png")
 save_freq_coeff(ω, g, "fmo_bsdo.txt")
 plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/fmo_bsdo.png")
 
