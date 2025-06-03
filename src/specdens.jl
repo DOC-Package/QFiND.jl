@@ -1,6 +1,18 @@
 # Define Abstract Type for Spectral Density Models
 abstract type SpectralDensity <: Function end
 
+# SumSD type
+struct SumSD <: SpectralDensity
+    sd1 :: SpectralDensity
+    sd2 :: SpectralDensity
+end
+
+function (s::SumSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    return s.sd1(ω; scale=scale) + s.sd2(ω; scale=scale)
+end
+# Overloading the + operator for SpectralDensity types
+Base.:+(sd1::SpectralDensity, sd2::SpectralDensity) = SumSD(sd1, sd2)
+
 # Power-law with exponential cutoff
 struct PowerLawExpSD <: SpectralDensity
     s :: Float64   # exponent

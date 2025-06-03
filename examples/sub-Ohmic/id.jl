@@ -28,7 +28,7 @@ g = res.coeff
 t = dataset.time
 approx = bcf_approx.(t, Ref(ω), Ref(g))
 evaluate_error(t, approx, dataset.bcf)
-plot_bcf(t, approx, dataset.bcf, "bcf_id.png")
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_id.png")
 save_freq_coeff(ω, g, "freq_coeff_id.txt")
 
 # 0 K
@@ -49,7 +49,7 @@ g = res.coeff
 t = dataset.time
 approx = bcf_approx.(t, Ref(ω), Ref(g))
 evaluate_error(t, approx, dataset.bcf)
-plot_bcf(t, approx, dataset.bcf, "bcf_0K_id.png")
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_0K_id.png")
 save_freq_coeff(ω, g, "freq_coeff_0K_id.txt")
 
 E_reorg = reorganization_energy(ω, g)

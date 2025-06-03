@@ -25,4 +25,3 @@ println("error: ", err)
 r = mylawson(ω, J, r, 10)
 err = norm(r.(ω) - J)
 println("error: ", err)
-#
