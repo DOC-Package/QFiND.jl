@@ -98,6 +98,7 @@ end
 function reorganization_energy(ω::Vector{Float64}, g::Vector{Float64})
     return sum(g.^2.0 ./ abs.(ω)) / 2.0
 end
+reorganization_energy(ω::Real, g::Real) = reorganization_energy([Float64(ω)], [Float64(g)])
 
 """
     (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
