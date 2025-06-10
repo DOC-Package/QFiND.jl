@@ -7,10 +7,10 @@ A = readdlm("pdi-bo.txt")
 λ = A[:,2]
 Γ = A[:,3]
 
-Temp = 300.0
-Ω_min = -600.0
+Temp = 0.0
+Ω_min = 0.0
 Ω_max = 2000.0
-N_ω = 2000
+N_ω = 1000
 T_max = 500.0
 N_t = 400
 eps = 5e-3
@@ -35,9 +35,15 @@ g = res.coeff
 t = dataset.time
 approx = bcf_approx.(t, Ref(ω), Ref(g))
 evaluate_error(t, approx, dataset.bcf)
-plot_bcf(t, approx, dataset.bcf, "./figure/bcf_id.png")
-save_freq_coeff(ω, g, "freq_coeff_bo_pdi.txt")
 
-plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/brownian_id.png")
+plot_bcf(t, approx, dataset.bcf, "./figure/bcf_id_0K.png")
+save_freq_coeff(ω, g, "freq_coeff_bo_pdi_0K.txt")
+plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/brownian_id_0K.png")
+
+# The reorganization energy
+E_r1 = sum(λ)
+E_r2 = reorganization_energy(ω, g)
+println("Original reorganization energy: ", E_r1)
+println("Effective reorganization energy: ", E_r2)
 
 

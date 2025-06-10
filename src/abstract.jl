@@ -52,15 +52,18 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=500) :: InitialDataSetID
+    n_time::Int=500)
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
     S = sbeta.(ω; scale=icm2ifs)
     S = max.(S, 0.0)
     t = collect(range(0, T_c, length=n_time))
-    bcf = bcf.(t)
-    return InitialDataSetID(ω, t, S, bcf)
+    res = bcf.(t; ret_err=true)
+    bcf  = first.(res)
+    err  = last.(res)
+    maxerr = maximum(abs, err)
+    return InitialDataSetID(ω, t, S, bcf), maxerr
 end
 
 function InitialData(
@@ -71,7 +74,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=500) :: InitialDataSetID
+    n_time::Int=500)
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs
@@ -91,7 +94,7 @@ function InitialData(
     Ω_max::Real, 
     T_c::Real; 
     n_freq::Int=1000, 
-    n_time::Int=500) :: InitialDataSetSVD
+    n_time::Int=500)
 
     ω = collect(range(Ω_min, Ω_max, length=n_freq))
     ω = ω .* icm2ifs

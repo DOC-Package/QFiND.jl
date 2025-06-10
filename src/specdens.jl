@@ -122,15 +122,18 @@ Compute the spectral density for the Tannor-Meyer model.
 """
 function (specdens::TannorMeyerSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
-    ω = abs(ω)
-    Ω = specdens.Ω .* scale
-    Γ = specdens.Γ .* scale
-    λ = specdens.λ .* scale
+    ωa = abs(ω)
+    Ωt = specdens.Ω 
+    Γt = specdens.Γ 
+    λt = specdens.λ 
     res = 0.0
-    for i in eachindex(specdens.Ω)
-        p    = 4.0 * specdens.Γ[i] * specdens.λ[i] * (specdens.Ω[i]^2 + specdens.Γ[i]^2)
-        deno = ((ω + specdens.Ω[i])^2 + specdens.Γ[i]^2) * ((ω - specdens.Ω[i])^2 + specdens.Γ[i]^2)
-        res += p * ω / deno
+    @inbounds for i in eachindex(Ωt)
+        Ωs = Ωt[i] * scale
+        Γs = Γt[i] * scale
+        λs = λt[i] * scale
+        p    = 4.0 * Γs * λs * (Ωs^2 + Γs^2)
+        deno = ((ωa + Ωs)^2 + Γs^2) * ((ωa - Ωs)^2 + Γs^2)
+        res += p * ωa / deno
     end
     return sgn * res
 end
@@ -167,7 +170,7 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     Γt = specdens.Γ 
     λt = specdens.λ 
     res = 0.0
-    @inbounds @simd for i in eachindex(Ωt)
+    @inbounds for i in eachindex(Ωt)
         Ωs = Ωt[i] * scale
         Γs = Γt[i] * scale
         λs = λt[i] * scale
