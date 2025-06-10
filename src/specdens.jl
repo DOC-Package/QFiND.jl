@@ -162,20 +162,21 @@ Compute the spectral density for the Brownian oscillator model.
 """
 function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
-    ω = abs(ω)
-    Ω = specdens.Ω .* scale
-    Γ = specdens.Γ .* scale
-    λ = specdens.λ .* scale
+    ωa = abs(ω)
+    Ωt = specdens.Ω 
+    Γt = specdens.Γ 
+    λt = specdens.λ 
     res = 0.0
-    for i in eachindex(Ω)
-        p    = 2.0 * Γ[i] * λ[i] * Ω[i]^2
-        deno = (ω^2 - Ω[i]^2)^2 + (Γ[i]^2 * ω^2)
-        res += p * ω / deno
+    @inbounds @simd for i in eachindex(Ωt)
+        Ωs = Ωt[i] * scale
+        Γs = Γt[i] * scale
+        λs = λt[i] * scale
+        p    = 2.0 * Γs * λs * (Ωs^2)
+        deno = (ωa^2 - Ωs^2)^2 + (Γs^2 * ωa^2)
+        res += p * ωa / deno
     end
     return sgn * res
 end
-
-
 
 function sd_nodes(sd::BrownianSD)
     poles = ComplexF64[]
