@@ -12,18 +12,18 @@ function plot_freq_coeff(
     ω = range(Ω_min, Ω_max, length=N_freq) |> collect
     S = sbeta.(ω)
 
-    ls1    = 20      # label font size
-    ls2    = 15      # tick label font size
-    lw1    = 2.5     # line width for main lines
-    lw2    = 2.5     # line width for reference lines
+    ls1    = 30      # label font size
+    ls2    = 20      # tick label font size
+    lw1    = 5     # line width for main lines
+    lw2    = 5     # line width for reference lines
     color1 = :orangered
     color2 = :royalblue
     color3 = :black
 
-    fig = Figure(size = (800, 700))
+    fig = Figure(size = (800, 1000))
 
     ax1 = Axis(fig[1, 1],
-        xlabel = "",
+        xlabel = L"\omega_k (\mathrm{cm}^{-1})",
         ylabel = L"S_\beta(\omega)",
         xlabelsize = ls1,
         ylabelsize = ls1,
@@ -45,6 +45,11 @@ function plot_freq_coeff(
     ylims!(ax1, (0, nothing))
     xlims!(ax2, (Ω_min, Ω_max))
     ylims!(ax2, (0, nothing))
+    # set the size of the tick labels
+    ax1.xticklabelsize = ls2
+    ax1.yticklabelsize = ls2
+    ax2.xticklabelsize = ls2
+    ax2.yticklabelsize = ls2
     save(filename, fig)
     return fig
 end

@@ -15,7 +15,7 @@ eps = 1e-2
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)
 bcf = BosonicBCF(sdens, Temp)
-dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
+dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
 res = id_discr(dataset, eps)
 ω = res.freq
 g = res.coeff

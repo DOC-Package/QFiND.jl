@@ -7,17 +7,17 @@ function esprit_decomp(bcf::Function, N_t::Integer, tc::Real, eps::Real)
     return (expon = ef.expon / icm2ifs, coeff = ef.coeff / icm2ifs^2.0)
 end
 
-Ω = 300.0
-Γ = 100.0
-λ = 50.0
-Temp = 300.0
+Ω = 1400.0
+Γ = 200.0
+λ = 600.0
+Temp = 5.0
 Ω_c = 6000.0
-T_max = 200.0
-N_t = 100
+T_max = 2000.0
+N_t = 500
 eps = 5e-3
 
 sdens = BrownianSD(Ω, Γ, λ)
-bcf = BosonicBCF(sdens, Temp)
+bcf = BosonicBCF(sdens, Temp, Ω_c; rtol=1e-6) # atol=1e-9
 
 t = collect(range(0.0, T_max, length=N_t))
 dt = t[2] - t[1]
@@ -26,4 +26,4 @@ ef = esprit(c, dt, eps)
 println("dgree: ", size(ef.expon))
 evaluate_error(t, ef.(t), c)
 plot_bcf(t, ef.(t), c,  "./figure/bcf_esprit.png")
-save_expon_coeff_union(ef.expon ./ icm2ifs, ef.coeff ./ icm2ifs^2.0, "expon_coeff_bo300.txt")
+save_expon_coeff_union(ef.expon ./ icm2ifs, ef.coeff ./ icm2ifs^2.0, "expon_coeff_bo1400_l600_300K.txt")
