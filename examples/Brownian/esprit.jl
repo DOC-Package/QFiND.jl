@@ -10,14 +10,14 @@ end
 Ω = 1400.0
 Γ = 200.0
 λ = 600.0
-Temp = 5.0
-Ω_c = 6000.0
-T_max = 2000.0
+Temp = 300.0
+ub = 6000.0
+T_max = 1000.0
 N_t = 500
 eps = 5e-3
 
 sdens = BrownianSD(Ω, Γ, λ)
-bcf = BosonicBCF(sdens, Temp, Ω_c; rtol=1e-6) # atol=1e-9
+bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6) # atol=1e-9
 
 t = collect(range(0.0, T_max, length=N_t))
 dt = t[2] - t[1]

@@ -12,8 +12,7 @@ struct BosonicBCF <: BosonicBathCorrelationFunction
     rtol::Union{Real,Nothing}
     atol::Union{Real,Nothing}
 end
-BosonicBCF(specdens::SpectralDensity, Temp::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF(specdens, Temp, 0.0, Inf, rtol, atol)
-BosonicBCF(specdens::SpectralDensity, Temp::Real, ub::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF(specdens, Temp, 0.0, ub, rtol, atol)
+BosonicBCF(specdens::SpectralDensity, Temp::Real; ub::Real=Inf, rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF(specdens, Temp, 0.0, ub, rtol, atol)
 
 
 # Bosonic BCF with real part only
@@ -25,8 +24,7 @@ struct BosonicBCF_Real <: BosonicBathCorrelationFunction
     rtol::Union{Real,Nothing} 
     atol::Union{Real,Nothing}
 end
-BosonicBCF_Real(specdens::SpectralDensity, Temp::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Real(specdens, Temp, 0.0, Inf, rtol, atol)
-BosonicBCF_Real(specdens::SpectralDensity, Temp::Real, ub::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Real(specdens, Temp, 0.0, ub, rtol, atol)
+BosonicBCF_Real(specdens::SpectralDensity, Temp::Real; ub::Real=Inf, rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Real(specdens, Temp, 0.0, ub, rtol, atol)
 
 # Bosonic BCF with imaginary part only
 struct BosonicBCF_Imag <: BosonicBathCorrelationFunction 
@@ -37,8 +35,7 @@ struct BosonicBCF_Imag <: BosonicBathCorrelationFunction
     rtol::Union{Real,Nothing}
     atol::Union{Real,Nothing}
 end
-BosonicBCF_Imag(specdens::SpectralDensity, Temp::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Imag(specdens, Temp, 0.0, Inf, rtol, atol)
-BosonicBCF_Imag(specdens::SpectralDensity, Temp::Real, ub::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Imag(specdens, Temp, 0.0, ub, rtol, atol)
+BosonicBCF_Imag(specdens::SpectralDensity, Temp::Real; ub::Real=Inf, rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_Imag(specdens, Temp, 0.0, ub, rtol, atol)
 
 struct BosonicBCF_dt <: BosonicBathCorrelationFunction 
     specdens::SpectralDensity
@@ -48,8 +45,7 @@ struct BosonicBCF_dt <: BosonicBathCorrelationFunction
     rtol::Union{Real,Nothing}
     atol::Union{Real,Nothing}
 end
-BosonicBCF_dt(specdens::SpectralDensity, Temp::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_dt(specdens, Temp, 0.0, Inf, rtol, atol)
-BosonicBCF_dt(specdens::SpectralDensity, Temp::Real, ub::Real; rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_dt(specdens, Temp, 0.0, ub, rtol, atol)
+BosonicBCF_dt(specdens::SpectralDensity, Temp::Real; ub::Real=Inf, rtol::Union{Real,Nothing}=nothing, atol::Union{Real,Nothing}=nothing) = BosonicBCF_dt(specdens, Temp, 0.0, ub, rtol, atol)
 
 
 # Bosonic BCF
