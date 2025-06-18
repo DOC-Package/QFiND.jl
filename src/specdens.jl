@@ -181,9 +181,13 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return sgn * res
 end
 
-function sd_nodes(sd::BrownianSD)
+function sd_poles(sd::BrownianSD; scale::Float64=1.0)
     poles = ComplexF64[]
-    for (Ω, Γ, _) in zip(sd.Ω, sd.Γ, sd.λ)
+    Ωt = sd.Ω 
+    Γt = sd.Γ 
+    for (Ω, Γ) in zip(Ωt, Γt)
+        Ω = Ω * scale
+        Γ = Γ * scale
         delta = sqrt(Ω^2 - (Γ/2)^2)
         push!(poles, delta - im*(Γ/2))
         push!(poles, -delta - im*(Γ/2))
@@ -191,9 +195,15 @@ function sd_nodes(sd::BrownianSD)
     return poles
 end
 
-function sd_residues(sd::BrownianSD)
+function sd_residues(sd::BrownianSD; scale::Float64=1.0)
     res = ComplexF64[]
-    for (Ω, Γ, λ) in zip(sd.Ω, sd.Γ, sd.λ)
+    Ωt = sd.Ω
+    Γt = sd.Γ
+    λt = sd.λ
+    for (Ω, Γ, λ) in zip(Ωt, Γt, λt)
+        Ω = Ω * scale
+        Γ = Γ * scale
+        λ = λ * scale
         delta = sqrt(Ω^2 - (Γ/2)^2)
         res1 = - (λ * Ω^2) / (4im*delta)
         res2 =   (λ * Ω^2) / (4im*delta)

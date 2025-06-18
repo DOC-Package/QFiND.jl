@@ -12,6 +12,7 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
+export sd_poles, sd_residues, padeN_Nm1, padeN_N, spectral_decomposition
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
 import Printf: @sprintf
@@ -27,6 +28,8 @@ include("id.jl")
 include("idc.jl")
 include("svd.jl")
 include("evaluate.jl")
+include("psd.jl")
+include("decomp.jl")
 
 using Printf
 using LinearAlgebra
