@@ -88,8 +88,6 @@ function bcf_approx(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{<
 end
 
 function bcf_approx(t::Float64, a::AbstractVector{<:Number}, c::AbstractVector{<:Number}) :: ComplexF64
-    a = a .* icm2ifs
-    c = c .* icm2ifs^2.0
     return sum(c .* exp.(-a .* t))
 end
 
