@@ -17,18 +17,15 @@ bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6) # atol=1e-9
 t = collect(range(0.0, T_max, length=N_t))
 bcf = bcf.(t)
 
-a, c = spectral_decomposition(sdens, Temp; npade=5)
-asd = a[1:2]
-csd = c[1:2]
-alt = a[3:end] 
-clt = c[3:end]
-er = expred(alt, clt, eps)
-alt = er.expon
-clt = er.coeff
-a = [asd; alt]
-c = [csd; clt]
+npade=5
+a, c = tpsd(sdens, Temp, npade, eps)
 approx = bcf_approx(t, a, c) 
 println("degree: ", size(a))
 evaluate_error(t, approx, bcf)
 plot_bcf(t, approx, bcf,  "./figure/bcf_psd.png")
 save_expon_coeff_union(a, c, "expon_coeff_bo1400_l600_300K.txt")
+
+ntrun = 1
+a, c = tpsd(sdens, Temp, npade, ntrun)
+approx = bcf_approx(t, a, c) 
+println("degree: ", size(a))

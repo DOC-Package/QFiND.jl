@@ -13,8 +13,10 @@ struct DecompESPRIT <: Decomposition end
 # 
 abstract type InitialDataSet end
 struct InitialDataSetBSDO <: InitialDataSet
-    freq :: Vector{Float64}
     qnsd :: Function
+    freq :: Vector{Float64}
+    time :: Vector{Float64}
+    bcf :: Vector{ComplexF64}
 end
 struct InitialDataSetID <: InitialDataSet
     freq :: Vector{Float64}
@@ -34,14 +36,21 @@ end
 function InitialData(
     method::DiscrBSDO, 
     sbeta::Function, 
+    bcf::Function, 
     Ω_min::Real, 
-    Ω_max::Real; 
-    n_lanczos::Int=1000 
-    ) :: InitialDataSetBSDO
+    Ω_max::Real,
+    T_c::Real;  
+    n_lanczos::Int=1000,
+    n_time::Int=500
+    ) 
 
     ω = collect(range(Ω_min, Ω_max, length=n_lanczos))
-
-    return InitialDataSetBSDO(ω, sbeta)
+    t = collect(range(0, T_c, length=n_time))
+    res = bcf.(t; ret_err=true)
+    bcf  = first.(res)
+    err  = last.(res)
+    maxerr = maximum(abs, err)
+    return InitialDataSetBSDO(sbeta, ω, t, bcf), maxerr
 end
 
 function InitialData(

@@ -1,11 +1,11 @@
-function spectral_decomposition(sd::SpectralDensity, Temp::Real; npade::Int=1)
+function psd(sd::SpectralDensity, Temp::Real, npade::Int)
     β = ħ * 1e15 / (kb * Temp)
-    exponents = ComplexF64[]
-    coeffs    = ComplexF64[]
+    expon = ComplexF64[]
+    coeff = ComplexF64[]
 
     # Contributions from the spectral density
-    poles_J  = sd_poles(sd; scale=icm2ifs)
-    res_J    = sd_residues(sd; scale=icm2ifs)
+    poles_J = sd_poles(sd; scale=icm2ifs)
+    res_J = sd_residues(sd; scale=icm2ifs)
     for (ω_p, r_p) in zip(poles_J, res_J)
         if imag(ω_p) < 0
             A = r_p * (coth((β*ω_p)/2) + 1)
@@ -20,12 +20,86 @@ function spectral_decomposition(sd::SpectralDensity, Temp::Real; npade::Int=1)
         poles_pade = ξ ./ β
         for (ω_p, η_j) in zip(poles_pade, η)
             A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
-            push!(exponents, ω_p)
-            push!(coeffs,    A)
+            push!(expon, ω_p)
+            push!(coeff, A)
         end
     end
 
-    return exponents, coeffs
+    return expon, coeff
+end
+
+function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real)
+    β = ħ * 1e15 / (kb * Temp)
+    expon = ComplexF64[]
+    coeff = ComplexF64[]
+
+    # Contributions from the spectral density
+    poles_J = sd_poles(sd; scale=icm2ifs)
+    res_J = sd_residues(sd; scale=icm2ifs)
+    for (ω_p, r_p) in zip(poles_J, res_J)
+        if imag(ω_p) < 0
+            A = r_p * (coth((β*ω_p)/2) + 1)
+            push!(expon, 1.0im * ω_p)
+            push!(coeff, (-1.0im) * A)
+        end
+    end
+
+    # Contributions from the Pade approximation
+    expon_psd = ComplexF64[]
+    coeff_psd = ComplexF64[]
+    if npade > 0
+        ξ, η = padeN_Nm1(npade)
+        poles_pade = ξ ./ β
+        for (ω_p, η_j) in zip(poles_pade, η)
+            A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
+            push!(expon_psd, ω_p)
+            push!(coeff_psd, A)
+        end
+    end
+    expon_tpsd, coeff_tpsd = balanced_truncation(expon_psd, coeff_psd, tol)
+    push!(expon, expon_tpsd...)
+    push!(coeff, coeff_tpsd...)
+
+    return expon, coeff
+end
+
+function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int)
+    # ntpsd must be smaller than npade
+    if ntrun > npade
+        throw(ArgumentError("ntpsd must be smaller than or equal to npade."))
+    end
+    β = ħ * 1e15 / (kb * Temp)
+    expon = ComplexF64[]
+    coeff = ComplexF64[]
+
+    # Contributions from the spectral density
+    poles_J = sd_poles(sd; scale=icm2ifs)
+    res_J = sd_residues(sd; scale=icm2ifs)
+    for (ω_p, r_p) in zip(poles_J, res_J)
+        if imag(ω_p) < 0
+            A = r_p * (coth((β*ω_p)/2) + 1)
+            push!(expon, 1.0im * ω_p)
+            push!(coeff, (-1.0im) * A)
+        end
+    end
+
+    # Contributions from the Pade approximation
+    expon_psd = ComplexF64[]
+    coeff_psd = ComplexF64[]
+    if npade > 0
+        ξ, η = padeN_Nm1(npade)
+        poles_pade = ξ ./ β
+        for (ω_p, η_j) in zip(poles_pade, η)
+            A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
+            push!(expon_psd, ω_p)
+            push!(coeff_psd, A)
+        end
+    end
+    expon_tpsd, coeff_tpsd = balanced_truncation(expon_psd, coeff_psd, ntrun)
+    push!(expon, expon_tpsd...)
+    push!(coeff, coeff_tpsd...)
+
+    return expon, coeff
 end
 
 function padeN_Nm1(nlt::Int)

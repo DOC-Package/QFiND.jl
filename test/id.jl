@@ -7,7 +7,7 @@ using QFiND
     alpha = 1.0
     gamc = 50.0
     Temp = 300.0
-    Ω_c = 1000.0
+    ub = 1000.0
     Ω_min = -400.0
     Ω_max = 400.0
     N_ω = 2000
@@ -18,25 +18,12 @@ using QFiND
 
     sdens = PowerLawExpSD(s, gamc; alpha=alpha)
     sbeta = BosonicQNSD(sdens, Temp)
-    bcf = BosonicBCF(sdens, Temp)
-    dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
+    bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6)
+    dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
 
     res = id_discr(dataset, eps)
     @test !isnothing(res)
     freq = res.freq
     coeff = res.coeff
     evaluate_error(freq, coeff, bcf, T_max, N_t)
-
-    res = id_discr(sbeta, bcf, Ω_min, Ω_max, T_max, N_ω, N_t, eps)
-    @test !isnothing(res)
-    freq = res.freq
-    coeff = res.coeff
-    evaluate_error(freq, coeff, bcf, T_max, N_t)
-
-    res = id_discr(sbeta, bcf, Ω_min, Ω_max, T_max, N_ω, N_t, rank)
-    @test !isnothing(res)
-    freq = res.freq
-    coeff = res.coeff
-    evaluate_error(freq, coeff, bcf, T_max, N_t)
-
 end

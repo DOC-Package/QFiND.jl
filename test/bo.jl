@@ -7,7 +7,7 @@ using QFiND
     Γ = 200.0
     λ = 600.0
     Temp = 300.0
-    Ω_c = 6000.0
+    ub = 6000.0
     Ω_min = -3000.0
     Ω_max = 3000.0
     N_w = 2000
@@ -18,8 +18,8 @@ using QFiND
 
     sdens = BrownianSD(Ω, Γ, λ)
     sbeta = BosonicQNSD(sdens, Temp)
-    bcf = BosonicBCF(sdens, Temp, Ω_c)
-    dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
+    bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6) 
+    dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_w, n_time=N_t)
 
     res = id_discr(dataset, eps)
     @test !isnothing(res)
@@ -30,8 +30,8 @@ using QFiND
     Temp = 0.0
     eps = 1e-12
     sbeta = BosonicQNSD(sdens, Temp)
-    bcf = BosonicBCF(sdens, Temp, Ω_c)
-    dataset = InitialData(DiscrID(), sbeta, bcf, 0.0, Ω_max, T_c; n_freq=N_w, n_time=N_t)
+    bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6) 
+    dataset, _ = InitialData(DiscrID(), sbeta, bcf, 0.0, Ω_max, T_c; n_freq=N_w, n_time=N_t)
 
     res = id_discr(dataset, eps)
     @test !isnothing(res)

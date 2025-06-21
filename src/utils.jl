@@ -129,8 +129,6 @@ function save_expon_coeff_union(expon::Vector{ComplexF64}, coeff::Vector{Complex
     end
 end
 
-
-
 function lawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
     x1 = setdiff(x, r.nodes)
     ⍺, β = lawson(x1, f.(x1), r.nodes, r.values, r.weights, nsteps)
