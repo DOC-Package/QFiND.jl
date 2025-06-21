@@ -1,7 +1,7 @@
 module QFiND
 
 export icm2ifs, icm2au, icm2ev, ħ, kb
-export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error, save_freq_coeff, save_expon_coeff_union,lawson
+export bcf_approx, equispaced_grid, gausslegendre_discr, evaluate_error, save_freq_coeff, save_expon_coeff, save_expon_coeff_union,lawson
 export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD
@@ -29,7 +29,6 @@ include("idc.jl")
 include("svd.jl")
 include("evaluate.jl")
 include("psd.jl")
-include("decomp.jl")
 
 using Printf
 using LinearAlgebra

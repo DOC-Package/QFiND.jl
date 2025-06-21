@@ -181,6 +181,22 @@ function (specdens::BrownianSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return sgn * res
 end
 
+function (specdens::BrownianSD)(ω::ComplexF64; scale::Float64=1.0) :: ComplexF64
+    Ωt = specdens.Ω 
+    Γt = specdens.Γ 
+    λt = specdens.λ 
+    res = 0.0
+    @inbounds for i in eachindex(Ωt)
+        Ωs = Ωt[i] * scale
+        Γs = Γt[i] * scale
+        λs = λt[i] * scale
+        p    = 2.0 * Γs * λs * (Ωs^2)
+        deno = (ω^2 - Ωs^2)^2 + (Γs^2 * ω^2)
+        res += p * ω / deno
+    end
+    return res
+end
+
 function sd_poles(sd::BrownianSD; scale::Float64=1.0)
     poles = ComplexF64[]
     Ωt = sd.Ω 
@@ -205,8 +221,8 @@ function sd_residues(sd::BrownianSD; scale::Float64=1.0)
         Γ = Γ * scale
         λ = λ * scale
         delta = sqrt(Ω^2 - (Γ/2)^2)
-        res1 = - (λ * Ω^2) / (4im*delta)
-        res2 =   (λ * Ω^2) / (4im*delta)
+        res1 = - (λ * Ω^2) / (2im*delta)
+        res2 =   (λ * Ω^2) / (2im*delta)
         push!(res, res1)
         push!(res, res2)
     end

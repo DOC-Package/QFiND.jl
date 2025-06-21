@@ -91,6 +91,10 @@ function bcf_approx(t::Float64, a::AbstractVector{<:Number}, c::AbstractVector{<
     return sum(c .* exp.(-a .* t))
 end
 
+function bcf_approx(t::AbstractVector{<:Real}, a::AbstractVector{<:Number}, c::AbstractVector{<:Number}) :: Vector{ComplexF64}
+    return [sum(c .* exp.(-a .* t_i)) for t_i in t]
+end
+
 
 function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename::String) 
     open(filename, "w") do io
@@ -105,6 +109,15 @@ function save_freq_coeff(freq::Vector{Float64}, coeff::Vector{Float64}, filename
     end
 end
 
+function save_expon_coeff(expon::Vector{ComplexF64}, coeff::Vector{ComplexF64}, filename::String)
+    open(filename, "w") do io
+        for (c1, c2) in zip(coeff, expon)
+            write(io, @sprintf("%0.12e  %0.12e  %0.12e  %0.12e\n", 
+                               real(c1), imag(c1), real(c2), imag(c2)))
+        end
+    end
+end
+
 function save_expon_coeff_union(expon::Vector{ComplexF64}, coeff::Vector{ComplexF64}, filename::String)
     open(filename, "w") do io
         for (c1, c2) in zip(coeff, expon)
@@ -115,6 +128,8 @@ function save_expon_coeff_union(expon::Vector{ComplexF64}, coeff::Vector{Complex
         end
     end
 end
+
+
 
 function lawson(x::Vector{<:Real}, f::Function, r::Barycentric, nsteps::Integer)
     x1 = setdiff(x, r.nodes)

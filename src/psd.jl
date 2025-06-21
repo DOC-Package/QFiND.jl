@@ -1,3 +1,33 @@
+function spectral_decomposition(sd::SpectralDensity, Temp::Real; npade::Int=1)
+    β = ħ * 1e15 / (kb * Temp)
+    exponents = ComplexF64[]
+    coeffs    = ComplexF64[]
+
+    # Contributions from the spectral density
+    poles_J  = sd_poles(sd; scale=icm2ifs)
+    res_J    = sd_residues(sd; scale=icm2ifs)
+    for (ω_p, r_p) in zip(poles_J, res_J)
+        if imag(ω_p) < 0
+            A = r_p * (coth((β*ω_p)/2) + 1)
+            push!(exponents, 1.0im * ω_p)
+            push!(coeffs,    (-1.0im) * A)
+        end
+    end
+
+    # Contributions from the Pade approximation
+    if npade > 0
+        ξ, η = padeN_Nm1(npade)
+        poles_pade = ξ ./ β
+        for (ω_p, η_j) in zip(poles_pade, η)
+            A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
+            push!(exponents, ω_p)
+            push!(coeffs,    A)
+        end
+    end
+
+    return exponents, coeffs
+end
+
 function padeN_Nm1(nlt::Int)
     δ(x,y) = ==(x,y)
     bn = n -> 2*n + 1
