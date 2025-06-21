@@ -14,6 +14,7 @@ We need to specify either the coupling strength `alpha` or the reorganization en
 
 ```julia
     julia> using QFiND
+    
     julia> sdens = PowLowExpSD(1.0, 50.0; alpha=35.0)
     (::PowerLawExpSD) (generic function with 1 method)
 ```
@@ -33,6 +34,15 @@ This `sdens` works as a function.
 ```
 
 3. Construct a bath correlation function
+
+```julia
+    julia> Temp = 300.0;
+
+    julia> bcf = BosonicBCF(sbeta, Temp)
+    (::BosonicBCF) (generic function with 1 method)
+```
+
+You can specify the upper bound and threshold of the integral when the next step (4. Create an initial dataset) is very slow, such that
 
 ```julia
     julia> bcf = BosonicBCF(sbeta, 300.0)

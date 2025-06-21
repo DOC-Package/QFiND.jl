@@ -18,7 +18,7 @@ using QFiND
 
     sdens = PowerLawExpSD(s, gamc; alpha=alpha)
     sbeta = BosonicQNSD(sdens, Temp)
-    bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6)
+    bcf = BosonicBCF(sdens, Temp; ub=ub)
     dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
 
     res = id_discr(dataset, eps)

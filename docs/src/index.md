@@ -12,4 +12,5 @@ Documentation for [QFiND](https://github.com/DOC-Package/QFiND.jl).
 - [ID Discretization](@ref)
 - [BSDO Discretization](@ref)
 - [Work Flow](@ref)
+- [Decomposition Methods](@ref)
 - [Reference](@ref)
