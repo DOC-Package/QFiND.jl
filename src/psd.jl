@@ -1,4 +1,4 @@
-function psd(sd::SpectralDensity, Temp::Real, npade::Int)
+function psd(sd::SpectralDensity, Temp::Real, npade::Int; pade_type::Symbol=:Nm1)
     β = ħ * 1e15 / (kb * Temp)
     expon = ComplexF64[]
     coeff = ComplexF64[]
@@ -9,14 +9,21 @@ function psd(sd::SpectralDensity, Temp::Real, npade::Int)
     for (ω_p, r_p) in zip(poles_J, res_J)
         if imag(ω_p) < 0
             A = r_p * (coth((β*ω_p)/2) + 1)
-            push!(exponents, 1.0im * ω_p)
-            push!(coeffs,    (-1.0im) * A)
+            push!(expon, 1.0im * ω_p)
+            push!(coeff,    (-1.0im) * A)
         end
     end
 
     # Contributions from the Pade approximation
     if npade > 0
-        ξ, η = padeN_Nm1(npade)
+        if pade_type == :Nm1
+            ξ, η = padeN_Nm1(npade)
+        elseif pade_type == :N
+            ξ, η, _ = padeN_N(npade)
+        else
+            throw(ArgumentError("pade_type must be :N or :Nm1"))
+        end
+        
         poles_pade = ξ ./ β
         for (ω_p, η_j) in zip(poles_pade, η)
             A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
@@ -28,7 +35,7 @@ function psd(sd::SpectralDensity, Temp::Real, npade::Int)
     return expon, coeff
 end
 
-function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real)
+function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real; pade_type::Symbol=:Nm1)
     β = ħ * 1e15 / (kb * Temp)
     expon = ComplexF64[]
     coeff = ComplexF64[]
@@ -48,7 +55,14 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real)
     expon_psd = ComplexF64[]
     coeff_psd = ComplexF64[]
     if npade > 0
-        ξ, η = padeN_Nm1(npade)
+        if pade_type == :Nm1
+            ξ, η = padeN_Nm1(npade)
+        elseif pade_type == :N
+            ξ, η, _ = padeN_N(npade)
+        else
+            throw(ArgumentError("pade_type must be :N or :Nm1"))
+        end
+        
         poles_pade = ξ ./ β
         for (ω_p, η_j) in zip(poles_pade, η)
             A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
@@ -63,7 +77,7 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real)
     return expon, coeff
 end
 
-function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int)
+function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int; pade_type::Symbol=:Nm1)
     # ntpsd must be smaller than npade
     if ntrun > npade
         throw(ArgumentError("ntpsd must be smaller than or equal to npade."))
@@ -87,7 +101,14 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int)
     expon_psd = ComplexF64[]
     coeff_psd = ComplexF64[]
     if npade > 0
-        ξ, η = padeN_Nm1(npade)
+        if pade_type == :Nm1
+            ξ, η = padeN_Nm1(npade)
+        elseif pade_type == :N
+            ξ, η, _ = padeN_N(npade)
+        else
+            throw(ArgumentError("pade_type must be :N or :Nm1"))
+        end
+
         poles_pade = ξ ./ β
         for (ω_p, η_j) in zip(poles_pade, η)
             A = (2im * η_j / β) * sd(1im * ω_p; scale=icm2ifs)
@@ -124,14 +145,14 @@ function padeN_Nm1(nlt::Int)
     end
     evalt = eigvals(LAMt)
     evalt_sorted = sort(evalt)
-    zeta_vec = [2.0 / real(evalt_sorted[2*nlt - n]) for n in 1:(nlt-1)]
+    zeta = [2.0 / real(evalt_sorted[2*nlt - n]) for n in 1:(nlt-1)]
 
     eta = zeros(Float64, nlt)
     for n in 1:nlt
         nume = 1.0
         deno = 1.0
         for j in 1:(nlt-1)
-            nume *= (zeta_vec[j]^2 - xi[n]^2)
+            nume *= (zeta[j]^2 - xi[n]^2)
         end
         for j in 1:nlt
             if j != n
@@ -147,7 +168,7 @@ end
 function padeN_N(nlt::Int)
     δ(x,y) = ==(x,y)
     bn = n -> 2*n + 1
-    RN = 1.0 / (4.0 * (nlt + 1) * bn[nlt+1])
+    RN = 1.0 / (4.0 * (nlt + 1) * bn(nlt+1))
     
     LAM = zeros(2*nlt+1, 2*nlt+1)
     for n in 1:(2*nlt+1)
@@ -159,21 +180,30 @@ function padeN_N(nlt::Int)
     evals_sorted = sort(evals) 
     xi = [2.0 / real(evals_sorted[2*nlt+2 - n]) for n in 1:nlt ]
     
-    LAMt = zeros(2*nlt-1, 2*nlt-1)
-    for n in 1:(2*nlt-1)
-        for m in 1:(2*nlt-1)
+    LAMt = zeros(2*nlt, 2*nlt)
+    for n in 1:2*nlt
+        for m in 1:2*nlt
             LAMt[m, n] = (δ(m,n+1) + δ(m,n-1)) / sqrt(bn(m+1) * bn(n+1))
         end
     end
     evalt = eigen(LAMt).values
     evalt_sorted = sort(evalt)
-    zeta = [ 2.0 / evalt_sorted[2*nlt - n] for n in 1:(nlt-1) ]
+    zeta = [ 2.0 / evalt_sorted[2*nlt - n + 1] for n in 1:nlt ]
     
     eta = zeros(Float64, nlt)
     for n in 1:nlt
-        nume = prod( (zeta[j]^2 - xi[n]^2) for j in 1:(nlt-1) )
-        deno = prod( (xi[j]^2 - xi[n]^2) for j in 1:nlt if j != n )
+        nume = 1.0
+        deno = 1.0
+        for j in 1:nlt
+            nume *= (zeta[j]^2 - xi[n]^2)
+        end
+        for j in 1:nlt
+            if j != n
+                deno *= (xi[j]^2 - xi[n]^2)
+            end
+        end
         eta[n] = 0.5 * RN * nume / deno
+        
     end
 
     return xi, eta, RN

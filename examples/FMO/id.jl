@@ -6,7 +6,7 @@ using Statistics
 using Serialization
 
 Temp = 300.0
-Ω_c = 495.0
+ub = 495.0
 Ω_min = -500.0
 Ω_max = 500.0
 N_ω = 2000
@@ -23,8 +23,8 @@ sdens = AAAfittedSD(r, E_reorg)
 println("Reorganization energy: ", sdens.reorgene)
 
 sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp, Ω_c)
-dataset = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_ω, n_time=N_t)
+bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-6)
+dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_c; n_freq=N_ω, n_time=N_t)
 
 res = id_discr(dataset, eps)
 ω = res.freq

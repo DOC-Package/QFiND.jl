@@ -10,8 +10,24 @@ end
 function (s::SumSD)(ω::Float64; scale::Float64=1.0) :: Float64
     return s.sd1(ω; scale=scale) + s.sd2(ω; scale=scale)
 end
+
+function (s::SumSD)(ω::ComplexF64; scale::Float64=1.0) :: ComplexF64
+    return s.sd1(ω; scale=scale) + s.sd2(ω; scale=scale)
+end
 # Overloading the + operator for SpectralDensity types
 Base.:+(sd1::SpectralDensity, sd2::SpectralDensity) = SumSD(sd1, sd2)
+
+function sd_poles(sd::SumSD; scale::Float64=1.0)
+    poles1 = sd_poles(sd.sd1; scale=scale)
+    poles2 = sd_poles(sd.sd2; scale=scale)
+    return vcat(poles1, poles2)
+end
+
+function sd_residues(sd::SumSD; scale::Float64=1.0)
+    residues1 = sd_residues(sd.sd1; scale=scale)
+    residues2 = sd_residues(sd.sd2; scale=scale)
+    return vcat(residues1, residues2)
+end
 
 # Power-law with exponential cutoff
 struct PowerLawExpSD <: SpectralDensity
@@ -230,6 +246,42 @@ function sd_residues(sd::BrownianSD; scale::Float64=1.0)
 end
 
 """
+    (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the spectral density for the Drude-Lorentz model.
+"""
+function (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ωa = abs(ω)
+    γs = specdens.γ * scale 
+    λs = specdens.λ * scale
+    res = 2 * λs * γs * ωa / (ωa^2 + γs^2)
+    return sgn * res
+end
+
+function (specdens::DrudeSD)(ω::ComplexF64; scale::Float64=1.0) :: ComplexF64
+    γs = specdens.γ * scale 
+    λs = specdens.λ * scale
+    res = 2 * λs * γs * ω / (ω^2 + γs^2)
+    return res
+end
+
+function sd_poles(sd::DrudeSD; scale::Float64=1.0)
+    poles = ComplexF64[]
+    γs = sd.γ * scale
+    push!(poles, - 1im * γs)
+    return poles
+end
+
+function sd_residues(sd::DrudeSD; scale::Float64=1.0)
+    res = ComplexF64[]
+    γs = sd.γ * scale
+    λs = sd.λ * scale
+    push!(res, λs * γs)
+    return res
+end
+
+"""
     (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
 Compute the spectral density for the Brownian oscillator model.
@@ -257,22 +309,6 @@ function (specdens::RationalSD)(ω::Float64; scale::Float64=1.0) :: Float64
     end
     return sgn * scale * res
 end
-
-
-"""
-    (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) -> Float64
-
-Compute the spectral density for the Drude model.
-"""
-function (specdens::DrudeSD)(ω::Float64; scale::Float64=1.0) :: Float64
-    sgn = sign(ω)
-    ω = abs(ω)
-    γ = specdens.γ .* scale
-    λ = specdens.λ .* scale
-    res = 2.0 * λ * γ * ω / (ω^2 + γ^2)
-    return sgn * res
-end
-
 
 # Define Abstract Type for the QNSD
 abstract type QuantumNoiseSpectralDensity <: Function end
