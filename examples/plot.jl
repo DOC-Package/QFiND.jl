@@ -54,28 +54,50 @@ function plot_freq_coeff(
     return fig
 end
 
-function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:Real}, filename::String)
-    # Plot the spectral density and save the plot
+function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:AbstractVector{<:Real}}, filename::String; labels::Vector{String}=String[])
+    # Plot multiple spectral densities on the same figure
     fig = Figure()
     ax = Axis(fig[1, 1],
-    xlabel = L"\text{Frequency} (\mathrm{cm^{-1}})",
-    ylabel = L"\text{Spectral Density}",
-    xlabelsize=20,
-    ylabelsize=20,
-    xgridvisible = false,
-    ygridvisible = false,
+        xlabel = L"\text{Frequency} (\mathrm{cm^{-1}})",
+        ylabel = L"\text{Spectral Density}",
+        xlabelsize=20,
+        ylabelsize=20,
+        xgridvisible = false,
+        ygridvisible = false,
     )
-    lines!(ax, w, j, color = :red, linewidth = 2)
+    
+    # 色のパレットを定義
+    colors = [:red, :blue, :green, :orange, :purple, :brown, :pink, :gray, :olive, :cyan]
+    
+    for (i, j_data) in enumerate(j)
+        color = colors[mod1(i, length(colors))]
+        label = isempty(labels) ? "Series $i" : (i <= length(labels) ? labels[i] : "Series $i")
+        lines!(ax, w, j_data, color = color, linewidth = 2, label = label)
+    end
+    
+    # 凡例を表示（複数のデータがある場合）
+    if length(j) > 1
+        axislegend(ax, position = :rt, labelsize = 15)
+    end
+    
     xlims!(ax, (w[1], w[end]))
     ylims!(ax, (0, nothing))
-    #
     save(filename, fig)
+    return fig
+end
+
+function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:Real}, filename::String)
+    return plot_qnsd(w, [j], filename)
+end
+
+function plot_qnsd(sbeta::AbstractVector{<:Function}, Ω_min::Real, Ω_max::Real, N_freq::Int, filename::String; labels::Vector{String}=String[])
+    w = range(Ω_min, Ω_max, length=N_freq) |> collect
+    j = [func.(w) for func in sbeta]
+    return plot_qnsd(w, j, filename; labels=labels)
 end
 
 function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int, filename::String)
-    w = range(Ω_min, Ω_max, length=N_freq) |> collect
-    j = sbeta.(w)
-    return plot_qnsd(w, j, filename)
+    return plot_qnsd([sbeta], Ω_min, Ω_max, N_freq, filename)
 end
 
 function plot_bcf(

@@ -324,6 +324,31 @@ struct BosonicQNSD_HighT <: QuantumNoiseSpectralDensity
     Temp :: Float64          
 end
 
+struct EffectiveBosonicQNSD <: QuantumNoiseSpectralDensity
+    exponents::Vector{ComplexF64}
+    coefficients::Vector{ComplexF64}
+    function EffectiveBosonicQNSD(exponents::Vector{ComplexF64}, coefficients::Vector{ComplexF64}; check_stability::Bool=true)
+        if check_stability
+            unstable = findall(x -> real(x) <= 0, exponents)
+            if !isempty(unstable)
+                @warn "Found exponents with non-positive real parts at indices: $unstable"
+            end
+        end
+        new(exponents, coefficients)
+    end
+end
+
+function (b::EffectiveBosonicQNSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    result = 0.0
+    for (exp_k, coeff_k) in zip(b.exponents, b.coefficients)
+        a = real(exp_k) * scale
+        b = imag(exp_k) * scale  
+        c = real(coeff_k) * scale^2.0  
+        d = imag(coeff_k) * scale^2.0
+        result += (c*a - d*(ω - b)) / ((ω - b)^2 + a^2)
+    end
+    return result
+end
 
 function f_BE(ω::Float64, Temp::Float64)
     β = ħ * 1e15 / (kb * Temp)

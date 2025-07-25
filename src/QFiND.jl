@@ -6,13 +6,13 @@ export DiscretizationMethod, DiscrID, DiscrBSDO, DecompID, DecompSVD
 export InitialDataSet, InitialDataSetID, InitialDataSetBSDO, InitialDataSetSVD, InitialData
 export SpectralDensity, PowerLawExpSD, TannorMeyerSD, BrownianSD, AAAfittedSD, DrudeSD, RationalSD
 export sd_nodes, sd_weights, BosonicThermalBogoliubov
-export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_Discrete, BosonicQNSD_HighT, FermionicQNSD
+export QuantumNoiseSpectralDensity, BosonicQNSD, BosonicQNSD_Discrete, BosonicQNSD_HighT, EffectiveBosonicQNSD, FermionicQNSD
 export FermionicQNSD_Plus, FermionicQNSD_Minus
 export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCorrelationFunction
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
-export sd_poles, sd_residues, padeN_Nm1, padeN_N, psd, tpsd, balanced_truncation
+export sd_poles, sd_residues, padeN_Nm1, padeN_N, psd, tpsd
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
 import Printf: @sprintf

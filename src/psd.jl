@@ -70,7 +70,7 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real; pade_type:
             push!(coeff_psd, A)
         end
     end
-    expon_tpsd, coeff_tpsd = balanced_truncation(expon_psd, coeff_psd, tol)
+    expon_tpsd, coeff_tpsd = QFiND.balanced_truncation(expon_psd, coeff_psd, tol)
     push!(expon, expon_tpsd...)
     push!(coeff, coeff_tpsd...)
 
@@ -116,7 +116,7 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int; pade_type
             push!(coeff_psd, A)
         end
     end
-    expon_tpsd, coeff_tpsd = balanced_truncation(expon_psd, coeff_psd, ntrun)
+    expon_tpsd, coeff_tpsd = QFiND.balanced_truncation(expon_psd, coeff_psd, ntrun)
     push!(expon, expon_tpsd...)
     push!(coeff, coeff_tpsd...)
 
