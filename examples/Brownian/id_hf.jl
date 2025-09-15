@@ -7,14 +7,14 @@ using QFiND
 Temp = 300.0
 Ω_min = -2000.0
 Ω_max = 3000.0
-N_ω = 2000
-T_max = 2000.0
-N_t = 500
+N_ω = 5000
+T_max = 200.0
+N_t = 400
 eps = 1e-2
 
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp, 6000.0; rtol=1e-6) # atol=1e-9
+bcf = BosonicBCF(sdens, Temp; ub=6000.0, rtol=1e-9) # atol=1e-9
 dataset, _ = InitialData(DiscrID(), sbeta, bcf, Ω_min, Ω_max, T_max; n_freq=N_ω, n_time=N_t)
 res = id_discr(dataset, eps)
 ω = res.freq
@@ -23,6 +23,6 @@ t = dataset.time
 approx = bcf_approx.(t, Ref(ω), Ref(g))
 evaluate_error(t, approx, dataset.bcf)
 plot_bcf(t, approx, dataset.bcf, "./figure/bcf_id.png")
-save_freq_coeff(ω, g, "freq_coeff_bo50.txt")
+save_freq_coeff(ω, g, "freq_coeff_bo1400.txt")
 
 plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/brownian_id.png")

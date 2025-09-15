@@ -17,9 +17,9 @@ t = collect(range(0.0, T_max, length=N_t))
 bcf = bcf.(t)
 
 npade=4
-a, c = tpsd(sdens, Temp, npade, 1; pade_type=:N)
+a, c = tpsd(sdens, Temp, npade, 1; pade_type=:Nm1)
 approx = bcf_approx(t, a, c) 
 println("degree: ", size(a))
 evaluate_error(t, approx, bcf)
 plot_bcf(t, approx, bcf,  "./figure/bcf_psd.png")
-#save_expon_coeff_union(a, c, "expon_coeff_bo1400_l600_300K.txt")
+save_expon_coeff_union(a ./ icm2ifs, c ./ icm2ifs^2.0, "expon_coeff_bo1400_l600_50K.txt")

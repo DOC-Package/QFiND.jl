@@ -1,9 +1,9 @@
 include("../plot.jl")
 using QFiND
 
-Ω = 50.0
-Γ = 10.0
-λ = 30.0
+Ω = 300.0
+Γ = 100.0
+λ = 50.0
 Temp = 300.0
 Ω_min = -600.0
 Ω_max = 1100.0
@@ -23,6 +23,6 @@ t = dataset.time
 approx = bcf_approx.(t, Ref(ω), Ref(g))
 evaluate_error(t, approx, dataset.bcf)
 plot_bcf(t, approx, dataset.bcf, "./figure/bcf_id.png")
-save_freq_coeff(ω, g, "freq_coeff_bo50.txt")
+save_freq_coeff(ω, g, "freq_coeff_bo300.txt")
 
 plot_freq_coeff(sbeta, ω, g, Ω_min, Ω_max, N_ω, "./figure/brownian_id.png")
