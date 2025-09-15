@@ -1,5 +1,5 @@
 include("../plot.jl")
-include("separate.jl")
+include("split_ri.jl")
 using LinearAlgebra
 using QFiND
 using ExpFit
@@ -25,7 +25,7 @@ plot_qnsd(omega, Jw, "./figure/Jw_s0s1_brownian.png")
 Temp = 300.0        # temperature in K
 ub = 3500.0         # upper bound of integration frequency in cm^-1
 T_max = 1500.0      # maximum time in fs
-N_t = 500          # number of time points
+N_t = 1500          # number of time points
 eps = 5e-2          # fitting error tolerance or set degree directly
 
 bcf = BosonicBCF(sdens, Temp; ub=ub, rtol=1e-7)         # function for BCF
@@ -39,11 +39,12 @@ println("finished BCF preparation")
 ef = esprit(c, dt, eps)                       
 println("dgree: ", size(ef.expon))
 
-freq_real, coeff_real, freq_imag, coeff_imag = separate(ef.expon, ef.coeff)
-println("freq_real: ", freq_real)
+freq_real, coeff_real, freq_imag, coeff_imag = split_real_imag(ef.expon, ef.coeff)
+save_expon_coeff(freq_real ./ icm2ifs, coeff_real ./ icm2ifs^2.0, "expon_coeff_s0s1_real.txt")  
+save_expon_coeff(freq_imag ./ icm2ifs, coeff_imag ./ icm2ifs^2.0, "expon_coeff_s0s1_imag.txt")
 
 bcf_real = t -> sum(coeff_real .* exp.(-freq_real .* t))
 bcf_imag = t -> sum(coeff_imag .* exp.(-freq_imag .* t))
 bcf_approx = t -> bcf_real(t) + im * bcf_imag(t)
 evaluate_error(t, bcf_approx.(t), c)
-plot_bcf(t, bcf_approx.(t), c,  "./figure/bcf_s0s1_separate.png")
+plot_bcf(t, bcf_approx.(t), c,  "./figure/bcf_s0s1.png")
