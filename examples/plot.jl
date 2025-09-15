@@ -1,6 +1,7 @@
 using QFiND
 using CairoMakie
-using LaTeXStrings 
+using LaTeXStrings
+using Printf 
 
 function plot_freq_coeff(
     sbeta::Function,
@@ -72,6 +73,26 @@ function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:Real}, filenam
     save(filename, fig)
 end
 
+function plot_qnsd(w::AbstractVector{<:Real}, j1::AbstractVector{<:Real}, j2::AbstractVector{<:Real}, filename::String)
+    # Plot multiple spectral densities and save the plot
+    fig = Figure()
+    ax = Axis(fig[1, 1],
+    xlabel = L"\text{Frequency} (\mathrm{cm^{-1}})",
+    ylabel = L"\text{Spectral Density}",
+    xlabelsize=20,
+    ylabelsize=20,
+    xgridvisible = false,
+    ygridvisible = false,
+    )
+    lines!(ax, w, j1, color = :red, linewidth = 2, label = "Data 1")
+    lines!(ax, w, j2, color = :blue, linewidth = 2, label = "Data 2")
+    xlims!(ax, (w[1], w[end]))
+    ylims!(ax, (0, nothing))
+    axislegend(ax, position = :rt)
+    #
+    save(filename, fig)
+end
+
 function plot_qnsd(sbeta::Function, Ω_min::Real, Ω_max::Real, N_freq::Int, filename::String)
     w = range(Ω_min, Ω_max, length=N_freq) |> collect
     j = sbeta.(w)
@@ -84,7 +105,12 @@ function plot_bcf(
     reference::AbstractVector{ComplexF64},
     filename::String)
 
-    error = (approx - reference) ./ abs(reference[1])
+    # 正規化値を保存
+    norm_value = abs(reference[1])
+    
+    reference = reference ./ norm_value
+    approx = approx ./ norm_value
+    error = (approx - reference)
 
     ls1    = 20      # label font size
     ls2    = 15      # tick label font size
@@ -138,6 +164,10 @@ function plot_bcf(
         linewidth = lw1
     )
     axislegend(ax1, position = :rt, labelsize = ls2)
+    
+    text!(ax1, 0.02, 0.95, text = @sprintf("|C(0)| = %.3e", norm_value), 
+          space = :relative, fontsize = 14, color = :black)
+    
     save(filename, fig)
     return fig
 end

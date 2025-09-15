@@ -353,12 +353,12 @@ function BosonicThermalBogoliubov(ω::AbstractVector{Float64}, g::AbstractVector
 end
 
 BosonicQNSD_Discrete(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = BosonicQNSD_Discrete([Float64(ω)], [Float64(g)], Temp; scale=scale)
-function BosonicQNSD_Discrete(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
+function BosonicQNSD_Discrete(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0) 
     β = ħ * 1e15 / (kb * Temp)
     g_p = g .* (1.0 ./ tanh.(0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
     g_t = -g .* (1.0 ./ tanh.(-0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
-    expon = vcat(ω, -ω) .* (-1.0im)
-    coeff = vcat(0.5 .* g_p, 0.5 .* g_t) .* (1.0+0.0im)
+    expon = vcat(ω, -ω) 
+    coeff = vcat(0.5 .* g_p, 0.5 .* g_t) 
     return expon, coeff
 end
 
@@ -385,8 +385,128 @@ struct FermionicQNSD_Minus <: FermionicQNSD
     ChemPot :: Float64  
 end
 
+# Discrete Gaussian Spectral Density
+struct DiscreteGaussianSD <: SpectralDensity
+    frequencies :: Vector{Float64}    
+    amplitudes :: Vector{Float64}     
+    width :: Float64                  
+    reorgene :: Float64              # 再組織化エネルギー
+end
 
+"""
+    DiscreteGaussianSD(frequencies, amplitudes, width)
+    DiscreteGaussianSD(frequencies, amplitudes, width, reorgene)
 
+離散データのスペクトル密度をガウシアンの和として表現します。
 
+# Arguments
+- `frequencies`: 周波数ベクトル
+- `amplitudes`: 各周波数でのスペクトル密度値
+- `width`: ガウシアン幅
+- `reorgene`: 再組織化エネルギー（省略時は自動計算）
 
+# Example
+```julia
+frequencies = [100.0, 200.0, 300.0]
+amplitudes = [0.5, 0.8, 0.3]
+width = 10.0
+sd = DiscreteGaussianSD(frequencies, amplitudes, width)
+# または再組織化エネルギーを指定
+sd = DiscreteGaussianSD(frequencies, amplitudes, width, 0.1)
+```
+"""
+# reorgeneを自動計算するコンストラクタ
+function DiscreteGaussianSD(frequencies::Vector{Float64}, amplitudes::Vector{Float64}, width::Float64)
+    # 離散版の再組織化エネルギー計算
+    reorgene = sum(amplitudes ./ abs.(frequencies)) / π
+    return DiscreteGaussianSD(frequencies, amplitudes, width, reorgene)
+end
 
+function (sd::DiscreteGaussianSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    ωs = ω * scale
+    ws = sd.width * scale
+    result = 0.0
+    for i in eachindex(sd.frequencies)
+        freq_scaled = sd.frequencies[i] * scale
+        amp_scaled = sd.amplitudes[i] / scale^2  
+        # Gaussian: A * ω * exp(-(ω-ω₀)²/(2σ²)) - 収束性向上のためωをかける
+        result += amp_scaled * ωs * exp(-(ωs - freq_scaled)^2 / (2 * ws^2))
+    end
+    return result
+end
+
+# Discrete Lorentzian Spectral Density
+struct DiscreteLorentzianSD <: SpectralDensity
+    frequencies :: Vector{Float64}    
+    amplitudes :: Vector{Float64}     
+    width :: Float64                  
+    reorgene :: Float64              # 再組織化エネルギー
+end
+
+"""
+    DiscreteLorentzianSD(frequencies, amplitudes, width)
+    DiscreteLorentzianSD(frequencies, amplitudes, width, reorgene)
+
+離散データのスペクトル密度をLorentzianの和として表現します。
+
+# Arguments
+- `frequencies`: 周波数ベクトル
+- `amplitudes`: 各周波数でのスペクトル密度値
+- `width`: Lorentzian幅（半値全幅FWHM）
+- `reorgene`: 再組織化エネルギー（省略時は自動計算）
+
+# Example
+```julia
+frequencies = [100.0, 200.0, 300.0]
+amplitudes = [0.5, 0.8, 0.3]
+width = 10.0
+sd = DiscreteLorentzianSD(frequencies, amplitudes, width)
+# または再組織化エネルギーを指定
+sd = DiscreteLorentzianSD(frequencies, amplitudes, width, 0.1)
+```
+"""
+# reorgeneを自動計算するコンストラクタ
+function DiscreteLorentzianSD(frequencies::Vector{Float64}, amplitudes::Vector{Float64}, width::Float64)
+    reorgene = sum(amplitudes ./ abs.(frequencies)) / π
+    return DiscreteLorentzianSD(frequencies, amplitudes, width, reorgene)
+end
+
+# 実数周波数での評価
+function (sd::DiscreteLorentzianSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    ωs = ω * scale
+    γs = sd.width * scale / 2.0  # FWHM を半値幅に変換
+    result = 0.0
+    for i in eachindex(sd.frequencies)
+        freq_scaled = sd.frequencies[i] * scale
+        amp_scaled = sd.amplitudes[i] / scale^2
+        # Lorentzian: A * (γ/2) * ω / ((ω-ω₀)² + (γ/2)²)
+        result += amp_scaled * γs * ωs / ((ωs - freq_scaled)^2 + γs^2)
+    end
+    return result
+end
+
+# 極とその留数を計算する関数
+function sd_poles(sd::DiscreteLorentzianSD; scale::Float64=1.0)
+    poles = ComplexF64[]
+    γs = sd.width * scale / 2.0
+    for freq in sd.frequencies
+        freq_scaled = freq * scale
+        # Lorentzianの極は ω₀ ± iγ/2
+        push!(poles, freq_scaled + 1im * γs)
+        push!(poles, freq_scaled - 1im * γs)
+    end
+    return poles
+end
+
+function sd_residues(sd::DiscreteLorentzianSD; scale::Float64=1.0)
+    residues = ComplexF64[]
+    γs = sd.width * scale / 2.0
+    for amp in sd.amplitudes
+        amp_scaled = amp / scale^2
+        # Lorentzianの留数
+        res = amp_scaled * γs / (2im * γs)  # = amp_scaled / (2im)
+        push!(residues, res)
+        push!(residues, -res)  # 共役極に対応
+    end
+    return residues
+end
