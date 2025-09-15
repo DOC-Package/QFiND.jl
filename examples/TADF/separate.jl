@@ -8,7 +8,7 @@ function separate(freq, coeff)
     for i in 1:N
         gam = real(freq[i])
         omg = imag(freq[i])
-        a = real(coeff[i])
+        a = real(coeff[i])      
         b = imag(coeff[i])
         G = [-gam omg; -omg -gam]
         
