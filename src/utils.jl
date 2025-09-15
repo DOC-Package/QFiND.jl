@@ -81,7 +81,7 @@ function linsys_weight(cc::AbstractVector{<:Complex{<:Real}}, idx::Vector{Int}, 
 end
 
 # Calculate the sum of the exponential function.
-function bcf_approx(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{<:Number}) :: ComplexF64
+function bcf_discrete(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{Float64}) :: ComplexF64
     ω = ω .* icm2ifs
     g = g .* icm2ifs
     return sum(g.^2.0 .* exp.(-im .* ω .* t) ./ 2.0)
@@ -111,6 +111,7 @@ end
 
 function save_expon_coeff(expon::Vector{ComplexF64}, coeff::Vector{ComplexF64}, filename::String)
     open(filename, "w") do io
+        write(io, "# coeff (real)    coeff (imag)    expon (real)    expon (imag)\n")
         for (c1, c2) in zip(coeff, expon)
             write(io, @sprintf("%0.12e  %0.12e  %0.12e  %0.12e\n", 
                                real(c1), imag(c1), real(c2), imag(c2)))

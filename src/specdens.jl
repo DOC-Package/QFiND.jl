@@ -378,12 +378,12 @@ function BosonicThermalBogoliubov(ω::AbstractVector{Float64}, g::AbstractVector
 end
 
 BosonicQNSD_Discrete(ω::Float64, g::Float64, Temp::Float64; scale::Float64=1.0) = BosonicQNSD_Discrete([Float64(ω)], [Float64(g)], Temp; scale=scale)
-function BosonicQNSD_Discrete(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0)
+function BosonicQNSD_Discrete(ω::AbstractVector{Float64}, g::AbstractVector{Float64}, Temp::Float64; scale::Float64=1.0) 
     β = ħ * 1e15 / (kb * Temp)
     g_p = g .* (1.0 ./ tanh.(0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
     g_t = -g .* (1.0 ./ tanh.(-0.5 * β .* ω .* icm2ifs / scale) .+ 1.0) ./ 2.0
-    expon = vcat(ω, -ω) .* (-1.0im)
-    coeff = vcat(0.5 .* g_p, 0.5 .* g_t) .* (1.0+0.0im)
+    expon = vcat(ω, -ω) 
+    coeff = vcat(0.5 .* g_p, 0.5 .* g_t) 
     return expon, coeff
 end
 
@@ -409,9 +409,3 @@ struct FermionicQNSD_Minus <: FermionicQNSD
     Temp :: Float64    
     ChemPot :: Float64  
 end
-
-
-
-
-
-
