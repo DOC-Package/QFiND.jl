@@ -72,6 +72,12 @@ struct DrudeSD <: SpectralDensity
     λ :: Float64
 end
 
+struct SemicircleSD <: SpectralDensity
+    s :: Float64    # exponent
+    γ :: Float64    # cutoff frequency
+    λ :: Float64    # reorganization energy
+end
+
 struct DiscreteSD <: SpectralDensity
     freq :: Vector{Float64}
     weight :: Vector{Float64}
@@ -279,6 +285,25 @@ function sd_residues(sd::DrudeSD; scale::Float64=1.0)
     λs = sd.λ * scale
     push!(res, λs * γs)
     return res
+end
+
+"""
+    (specdens::SemicircleSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the spectral density for the Semicircle model.
+"""
+function (specdens::SemicircleSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ωa = abs(ω)
+    γs = specdens.γ * scale 
+    λs = specdens.λ * scale
+    s = specdens.s
+    α = λs * (2 * sqrt(π)) * gamma((s + 3) / 2) / (gamma(s / 2) * γs^s)
+    if ωa > γs
+        return 0.0
+    end
+    res = 2 * α * ωa^s * sqrt(1 - (ωa / γs)^2)
+    return sgn * res
 end
 
 """
