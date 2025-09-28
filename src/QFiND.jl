@@ -12,6 +12,7 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr, id_discr_c, svd_intermed_decomp
+export ChebyshevExpansion, chebyshev_expansion, chebyshev_bcf
 export sd_poles, sd_residues, padeN_Nm1, padeN_N, psd, tpsd
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
@@ -30,6 +31,7 @@ include("svd.jl")
 include("evaluate.jl")
 include("balanced_truncation.jl")
 include("psd.jl")
+include("chebyshev.jl")
 
 using Printf
 using LinearAlgebra
