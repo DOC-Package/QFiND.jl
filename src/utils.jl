@@ -81,7 +81,7 @@ function linsys_weight(cc::AbstractVector{<:Complex{<:Real}}, idx::Vector{Int}, 
 end
 
 # Calculate the sum of the exponential function.
-function bcf_discrete(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{Float64}) :: ComplexF64
+function bcf_approx(t::Float64, ω::AbstractVector{Float64}, g::AbstractVector{Float64}) :: ComplexF64
     ω = ω .* icm2ifs
     g = g .* icm2ifs
     return sum(g.^2.0 .* exp.(-im .* ω .* t) ./ 2.0)
