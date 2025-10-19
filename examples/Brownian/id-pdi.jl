@@ -17,7 +17,7 @@ eps = 5e-3
 
 sdens = BrownianSD(Ω, Γ, λ)
 sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp; rtol=1e-8) # atol=1e-9
+bcf = BosonicBCF(sdens, Temp; ub=6000.0, rtol=1e-8) # atol=1e-9
 
 elapsed_time = @elapsed begin
     println("Started the Computing of the initial data...")
