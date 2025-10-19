@@ -20,7 +20,7 @@ end
 Compute Chebyshev expansion coefficients for a bath correlation function using QuadGK.
 """
 function chebyshev_expansion(sd::SpectralDensity, Temp::Real, ω_min::Real, ω_max::Real, 
-                            n_terms::Int; scale::Float64=icm2ifs, ngauss::Int=1000)
+                           n_terms::Int; scale::Float64=icm2ifs, rtol::Real=1e-8)
     ω_bar = (ω_max + ω_min) / 2 * scale
     Ω = (ω_max - ω_min) / 2 * scale
     β = ħ * 1e15 / (kb * Temp) 
@@ -39,10 +39,13 @@ function chebyshev_expansion(sd::SpectralDensity, Temp::Real, ω_min::Real, ω_m
             # Chebyshev polynomial T_k
             T_k = cos(k * acos(x))
             prefactor = (k == 0) ? 1.0 : 2.0
-            return prefactor * (-1im)^k * T_k * sbeta 
+            weight = 1 / sqrt(1 - x^2)
+            #return prefactor * (-1im)^k * T_k * J_val * thermal_factor * weight
+            return prefactor * (-1im)^k * T_k * sbeta * weight
         end
-        x, w = gausschebyshevt(ngauss)
-        result = dot(w, integrand.(x))
+        result1, _ = quadgk(integrand, -1, 0; rtol=rtol)
+        result2, _ = quadgk(integrand, 0, 1; rtol=rtol)
+        result = result1 + result2
         coeffs[k+1] = (Ω / π) * result 
     end
     return ChebyshevExpansion(ω_min, ω_max, ω_bar, Ω, coeffs, basis, n_terms)
