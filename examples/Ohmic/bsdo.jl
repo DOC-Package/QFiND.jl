@@ -19,8 +19,9 @@ N_t = 200
 
 Temp = 300.0
 sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp)
-res = bsdo_discr(sbeta, Ω_min, Ω_max, degree)
+bcf = BosonicBCF(sdens, Temp; rtol=1e-7)
+dataset, _ = InitialData(DiscrBSDO(), sbeta, bcf, Ω_min, Ω_max, T_max; n_lanczos=2000, n_time=N_t)
+res = bsdo_discr(dataset, degree; rtol=1e-7)
 ω = res.freq
 g = res.coeff
 t = collect(range(0.0, T_max, length=N_t))
@@ -41,8 +42,9 @@ T_max = 500.0
 N_t = 200
 
 sbeta = BosonicQNSD(sdens, Temp)
-bcf = BosonicBCF(sdens, Temp)
-res = bsdo_discr(sbeta, Ω_min, Ω_max, degree)
+bcf = BosonicBCF(sdens, Temp; rtol=1e-7)
+dataset, _ = InitialData(DiscrBSDO(), sbeta, bcf, Ω_min, Ω_max, T_max; n_lanczos=2000, n_time=N_t)
+res = bsdo_discr(dataset, degree; rtol=1e-7)
 ω = res.freq
 g = res.coeff
 t = collect(range(0.0, T_max, length=N_t))
