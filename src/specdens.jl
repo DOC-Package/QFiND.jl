@@ -309,7 +309,7 @@ end
 """
     (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) -> Float64
 
-Compute the spectral density for the Brownian oscillator model.
+Compute the spectral density fitted by the AAA algorithm.
 """
 function (specdens::AAAfittedSD)(ω::Float64; scale::Float64=1.0) :: Float64
     sgn = sign(ω)
