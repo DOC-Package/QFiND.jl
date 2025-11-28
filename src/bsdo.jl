@@ -102,7 +102,7 @@ end
 
 Compute the discretization of the QNSD using the BSDO method.
 """
-function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int)
+function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int; rtol::Float64=1e-8, atol::Float64=1e-12)
 
     # Compute the quantum noise spectral density
     S = sbeta.(ω)
@@ -118,11 +118,11 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int)
     Ω_min = first(ω)
     Ω_max = last(ω)
     if Ω_min < 0
-        norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0)
-        norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max)
+        norm1, err1 = quadgk(x -> sbeta(x), Ω_min, 0; rtol=rtol, atol=atol)
+        norm2, err2 = quadgk(x -> sbeta(x), 0, Ω_max; rtol=rtol, atol=atol)
         norm = norm1 + norm2
     else
-        norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max)
+        norm, err = quadgk(x -> sbeta(x), Ω_min, Ω_max; rtol=rtol, atol=atol)
     end
     gk .*= norm * 2.0 / π
     gk = sqrt.(gk) 
@@ -131,14 +131,14 @@ function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int)
 end
 
 
-function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, degree::Int; n_lanczos::Int=1000)
+function bsdo_discr(sbeta::Function, Ω_min::Real, Ω_max::Real, degree::Int; n_lanczos::Int=1000, rtol::Float64=1e-8, atol::Float64=1e-12)
 
     # Generate the frequencies
     ω = range(Ω_min, Ω_max, length=n_lanczos) |> collect
 
-    return bsdo_discr(sbeta, ω, degree)
+    return bsdo_discr(sbeta, ω, degree; rtol=rtol, atol=atol)
 end
 
-function bsdo_discr(dataset::InitialDataSetBSDO, degree::Int)
-    return bsdo_discr(dataset.qnsd, dataset.freq, degree)
+function bsdo_discr(dataset::InitialDataSetBSDO, degree::Int; rtol::Float64=1e-8, atol::Float64=1e-12)
+    return bsdo_discr(dataset.qnsd, dataset.freq, degree; rtol=rtol, atol=atol)
 end
