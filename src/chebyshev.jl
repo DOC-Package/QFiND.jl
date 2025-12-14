@@ -20,12 +20,11 @@ end
 Compute Chebyshev expansion coefficients for a bath correlation function using QuadGK.
 """
 function chebyshev_expansion(sd::SpectralDensity, Temp::Real, ω_min::Real, ω_max::Real, 
-                           n_terms::Int; scale::Float64=icm2ifs, rtol::Real=1e-8)
+                           n_terms::Int; scale::Float64=icm2ifs, rtol::Real=1e-8, atol::Real=1e-12)
     ω_bar = (ω_max + ω_min) / 2 * scale
     Ω = (ω_max - ω_min) / 2 * scale
     β = ħ * 1e15 / (kb * Temp) 
     coeffs = zeros(ComplexF64, n_terms)
-    
     # Construct basis functions
     basis = Vector{Function}(undef, n_terms)
     for k in 0:(n_terms-1)
@@ -40,13 +39,11 @@ function chebyshev_expansion(sd::SpectralDensity, Temp::Real, ω_min::Real, ω_m
             T_k = cos(k * acos(x))
             prefactor = (k == 0) ? 1.0 : 2.0
             weight = 1 / sqrt(1 - x^2)
-            #return prefactor * (-1im)^k * T_k * J_val * thermal_factor * weight
             return prefactor * (-1im)^k * T_k * sbeta * weight
         end
-        result1, _ = quadgk(integrand, -1, 0; rtol=rtol)
-        result2, _ = quadgk(integrand, 0, 1; rtol=rtol)
-        result = result1 + result2
-        coeffs[k+1] = (Ω / π) * result 
+        result1, _ = quadgk(integrand, -1, 0; rtol=rtol, atol=atol)
+        result2, _ = quadgk(integrand, 0, 1; rtol=rtol, atol=atol)
+        coeffs[k+1] = (Ω / π) * (result1 + result2)
     end
     return ChebyshevExpansion(ω_min, ω_max, ω_bar, Ω, coeffs, basis, n_terms)
 end
@@ -85,4 +82,40 @@ Create a bath correlation function using Chebyshev expansion.
 """
 function chebyshev_bcf(cheb::ChebyshevExpansion)
     return t -> evaluate_correlation(cheb, t)
+end
+
+"""
+    compute_time_derivative_matrix(cheb::ChebyshevExpansion)
+
+Compute the derivative expansion matrix D for the Chebyshev expansion.
+"""
+function chebyshev_derivative_matrix(cheb::ChebyshevExpansion)
+    n = cheb.n_terms
+    ω_c = cheb.ω_bar
+    Ω = cheb.Ω
+    D = zeros(ComplexF64, n, n)
+    for k in 1:n
+        D[k, k] = -1im * ω_c
+    end
+    for k in 2:n
+        D[k, k-1] = 0.5 * Ω
+    end
+    for k in 1:n-1
+        D[k, k+1] = -0.5 * Ω
+    end
+    D[1,2] = -Ω
+    return D
+end
+
+"""
+    chebyshev_expansion_dt(t::Real, cheb::ChebyshevExpansion)
+
+Evaluate the time derivative of the Chebyshev expansion at time t.
+"""
+function chebyshev_expansion_dt(t::Real, cheb::ChebyshevExpansion)
+    n_terms = cheb.n_terms
+    D = chebyshev_derivative_matrix(cheb)
+    φ = cheb.basis
+    result = sum(cheb.coeffs[k] * sum(D[k, ℓ] * φ[ℓ](t) for ℓ in 1:n_terms) for k in 1:n_terms)
+    return result
 end

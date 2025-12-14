@@ -12,7 +12,7 @@ export BathCorrelationFunction, BosonicBathCorrelationFunction, FermionicBathCor
 export BosonicBCF, BosonicBCF_Real, BosonicBCF_Imag, BosonicBCF_dt, reorganization_energy
 export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr
-export ChebyshevExpansion, chebyshev_expansion, chebyshev_bcf
+export ChebyshevExpansion, chebyshev_expansion, chebyshev_bcf, chebyshev_derivative_matrix, chebyshev_expansion_dt
 export sd_poles, sd_residues, padeN_Nm1, padeN_N, psd, tpsd
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
