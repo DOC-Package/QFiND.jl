@@ -24,6 +24,7 @@ Given the exponents `a` and coefficients `c` of a sum of exponentials, compute a
 The initial exponents must have positive real part.
 """
 function balanced_truncation(a::AbstractVector{<:Number}, c::AbstractVector{<:Number}, eps::Float64)
+    println("Running balanced truncation...")
     if any(x -> real(x) < 0, a)
         throw(ArgumentError("The exponents must have positive real part."))
     end
@@ -41,6 +42,7 @@ Given the exponents `a` and coefficients `c` of a sum of exponentials, compute a
 The initial exponents must have positive real part.
 """
 function balanced_truncation(a::AbstractVector{<:Number}, c::AbstractVector{<:Number}, M::Int)
+    println("Running balanced truncation...")
     # check if the real part of the exponents is positive
     if any(x -> real(x) < 0, a)
         throw(ArgumentError("The exponents must have positive real part."))

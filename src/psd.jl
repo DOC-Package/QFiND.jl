@@ -1,4 +1,5 @@
 function psd(sd::SpectralDensity, Temp::Real, npade::Int; pade_type::Symbol=:Nm1)
+    println("Running PSD (Padé Spectral Decomposition) method...")
     β = ħ * 1e15 / (kb * Temp)
     expon = ComplexF64[]
     coeff = ComplexF64[]
@@ -36,6 +37,7 @@ function psd(sd::SpectralDensity, Temp::Real, npade::Int; pade_type::Symbol=:Nm1
 end
 
 function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real; pade_type::Symbol=:Nm1)
+    println("Running TPSD (Truncated PSD) method...")
     β = ħ * 1e15 / (kb * Temp)
     expon = ComplexF64[]
     coeff = ComplexF64[]
@@ -78,6 +80,7 @@ function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, tol::Real; pade_type:
 end
 
 function tpsd(sd::SpectralDensity, Temp::Real, npade::Int, ntrun::Int; pade_type::Symbol=:Nm1)
+    println("Running TPSD (Truncated PSD) method...")
     # ntpsd must be smaller than npade
     if ntrun > npade
         throw(ArgumentError("ntpsd must be smaller than or equal to npade."))

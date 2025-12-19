@@ -21,6 +21,7 @@ Compute Chebyshev expansion coefficients for a bath correlation function using Q
 """
 function chebyshev_expansion(sd::SpectralDensity, Temp::Real, ω_min::Real, ω_max::Real, 
                            n_terms::Int; scale::Float64=icm2ifs, rtol::Real=1e-8, atol::Real=1e-12)
+    println("Running Chebyshev expansion method...")
     ω_bar = (ω_max + ω_min) / 2 * scale
     Ω = (ω_max - ω_min) / 2 * scale
     β = ħ * 1e15 / (kb * Temp) 

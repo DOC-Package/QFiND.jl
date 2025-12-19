@@ -82,6 +82,7 @@ end
 
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, eps::Real; rand::Bool=false)
+    println("Running ID (Interpolative Decomposition) method...")
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
 
@@ -94,6 +95,7 @@ end
 
 function id_discr(sbeta::AbstractVector{<:Real}, cc::AbstractVector{<:Complex{<:Real}}, 
     ω::AbstractVector{<:Real}, t::AbstractVector{<:Real}, frank::Int; rand::Bool=false)
+    println("Running ID (Interpolative Decomposition) method...")
     # Create the core matrix f.
     fmat = create_integrand(sbeta, t, ω)
     
