@@ -103,7 +103,7 @@ end
 Compute the discretization of the QNSD using the BSDO method.
 """
 function bsdo_discr(sbeta::Function, ω::AbstractVector{Float64}, degree::Int; rtol::Float64=1e-8, atol::Float64=1e-12)
-    println("Running BSDO (Balanced Spectral Density Orthogonalization) method...")
+    println("Running BSDO (Bath Spectral Density Orthogonal) method...")
 
     # Compute the quantum noise spectral density
     S = sbeta.(ω)

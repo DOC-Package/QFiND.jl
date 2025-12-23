@@ -67,7 +67,6 @@ function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:AbstractVector
         ygridvisible = false,
     )
     
-    # 色のパレットを定義
     colors = [:red, :blue, :green, :orange, :purple, :brown, :pink, :gray, :olive, :cyan]
     
     for (i, j_data) in enumerate(j)
@@ -76,7 +75,6 @@ function plot_qnsd(w::AbstractVector{<:Real}, j::AbstractVector{<:AbstractVector
         lines!(ax, w, j_data, color = color, linewidth = 2, label = label)
     end
     
-    # 凡例を表示（複数のデータがある場合）
     if length(j) > 1
         axislegend(ax, position = :rt, labelsize = 15)
     end
@@ -127,7 +125,6 @@ function plot_bcf(
     reference::AbstractVector{ComplexF64},
     filename::String)
 
-    # 正規化値を保存
     norm_value = abs(reference[1])
     
     reference = reference ./ norm_value
