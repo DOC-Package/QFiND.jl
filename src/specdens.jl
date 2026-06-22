@@ -99,7 +99,10 @@ end
 struct RationalSD <: SpectralDensity
     poles::Vector{ComplexF64}
     residues::Vector{ComplexF64}
+    r_inf::Float64
 end
+
+RationalSD(poles, residues) = RationalSD(poles, residues, 0.0)
 
 struct WideBandSD <: SpectralDensity
     Γ :: Float64
@@ -324,11 +327,10 @@ function (specdens::RationalSD)(ω::Float64; scale::Float64=1.0) :: Float64
     ω = abs(ω)
     poles = specdens.poles .* scale
     residues = specdens.residues .* scale
-    res = 0.0
+    res = specdens.r_inf
     for i in eachindex(specdens.poles)
-        res += residues[i] / (ω - poles[i])
+        res += real(residues[i] / (ω - poles[i]))
     end
-    res = real(res)
     if res < 0.0
         res = 0.0
     end

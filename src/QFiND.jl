@@ -14,6 +14,7 @@ export FermionicBCF_Plus, FermionicBCF_Minus
 export bsdo_discr, id_discr
 export ChebyshevExpansion, chebyshev_expansion, chebyshev_bcf, chebyshev_derivative_matrix, chebyshev_expansion_dt
 export sd_poles, sd_residues, padeN_Nm1, padeN_N, psd, tpsd
+export AAApoles, AAAresidues, AAArinf, AAAPartialFraction, poles_to_exponents
 
 import RationalFunctionApproximation: Barycentric, evaluate, lawson
 import Printf: @sprintf
