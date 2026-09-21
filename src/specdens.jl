@@ -51,6 +51,45 @@ function PowerLawExpSD(s::Float64, γ::Float64; alpha::Union{Float64,Nothing}=no
     end
 end
 
+# Ohmic spectral density with an exponential cutoff
+struct OhmicExpSD <: SpectralDensity
+    γ :: Float64   # cutoff frequency
+    α :: Float64   # coefficient
+    reorgene :: Float64   # reorganization energy
+end
+
+function OhmicExpSD(γ::Float64; alpha::Union{Float64,Nothing}=nothing, reorgene::Union{Float64,Nothing}=nothing)
+    if (alpha === nothing) == (reorgene === nothing)
+        throw(ArgumentError("Please provide either α or reorgene, but not both."))
+    end
+
+    if alpha !== nothing
+        return OhmicExpSD(γ, alpha, alpha)
+    else
+        return OhmicExpSD(γ, reorgene, reorgene)
+    end
+end
+
+# Ohmic spectral density with a Gaussian cutoff
+struct OhmicGaussSD <: SpectralDensity
+    γ :: Float64   # cutoff frequency
+    α :: Float64   # coefficient
+    reorgene :: Float64   # reorganization energy
+end
+
+function OhmicGaussSD(γ::Float64; alpha::Union{Float64,Nothing}=nothing, reorgene::Union{Float64,Nothing}=nothing)
+    if (alpha === nothing) == (reorgene === nothing)
+        throw(ArgumentError("Please provide either α or reorgene, but not both."))
+    end
+
+    if alpha !== nothing
+        return OhmicGaussSD(γ, alpha, alpha * gamma(0.5) / 2.0)
+    else
+        alpha = 2.0 * reorgene / gamma(0.5)
+        return OhmicGaussSD(γ, alpha, reorgene)
+    end
+end
+
 # Tannor-Meyer
 struct TannorMeyerSD <: SpectralDensity
     Ω :: Vector{Float64}  # vector of central frequencies
@@ -137,6 +176,32 @@ function (specdens::PowerLawExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
     γ = specdens.γ * scale
     α = specdens.α * scale
     return sgn * π * α * γ^(-s) * ω^s * exp(-ω / γ)
+end
+
+"""
+    (specdens::OhmicExpSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the Ohmic spectral density with an exponential cutoff.
+"""
+function (specdens::OhmicExpSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ω = abs(ω)
+    γ = specdens.γ * scale
+    α = specdens.α * scale
+    return sgn * π * α * γ^(-1.0) * ω * exp(-ω / γ)
+end
+
+"""
+    (specdens::OhmicGaussSD)(ω::Float64; scale::Float64=1.0) -> Float64
+
+Compute the Ohmic spectral density with a Gaussian cutoff.
+"""
+function (specdens::OhmicGaussSD)(ω::Float64; scale::Float64=1.0) :: Float64
+    sgn = sign(ω)
+    ω = abs(ω)
+    γ = specdens.γ * scale
+    α = specdens.α * scale
+    return sgn * π * α * γ^(-1.0) * ω * exp(-(ω / γ)^2)
 end
 
 
