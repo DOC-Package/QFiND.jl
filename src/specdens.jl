@@ -294,6 +294,9 @@ function sd_poles(sd::BrownianSD; scale::Float64=1.0)
     for (Ω, Γ) in zip(Ωt, Γt)
         Ω = Ω * scale
         Γ = Γ * scale
+        if Ω^2 <= (Γ/2)^2
+            throw(ArgumentError("BrownianSD requires Ω^2 > (Γ/2)^2 for real, nonzero delta; got Ω=$Ω and Γ=$Γ."))
+        end
         delta = sqrt(Ω^2 - (Γ/2)^2)
         push!(poles, delta - im*(Γ/2))
         push!(poles, -delta - im*(Γ/2))
@@ -310,6 +313,9 @@ function sd_residues(sd::BrownianSD; scale::Float64=1.0)
         Ω = Ω * scale
         Γ = Γ * scale
         λ = λ * scale
+        if Ω^2 <= (Γ/2)^2
+            throw(ArgumentError("BrownianSD requires Ω^2 > (Γ/2)^2 for real, nonzero delta; got Ω=$Ω and Γ=$Γ."))
+        end
         delta = sqrt(Ω^2 - (Γ/2)^2)
         res1 = - (λ * Ω^2) / (2im*delta)
         res2 =   (λ * Ω^2) / (2im*delta)
